@@ -43,8 +43,8 @@ function player:update(dt)
 	-- ##################
 	-- Check once for input
 	local kl, kr
-	kl = lk.isDown("left")   -- move left
-	kr = lk.isDown("right")  -- move right
+	kl = lk.isDown("left", "a")   -- move left
+	kr = lk.isDown("right", "d")  -- move right
 	--kx = lk.isDown("n")      -- jump
 	--kz = lk.isDown("m")      -- whip
 	-- Turn booleans into integers
@@ -53,8 +53,8 @@ function player:update(dt)
 	ir = kr and 1 or 0
 	dx = ir-il
 
-	if lk.isDown("a") then self.xv = self.xv - 60*dt end
-	if lk.isDown("d") then self.xv = self.xv + 60*dt end
+	--if lk.isDown("a") then self.xv = self.xv - 20*dt end
+	--if lk.isDown("d") then self.xv = self.xv + 20*dt end
 	
 	if self.xv < 0 then
 		player_facing = -1
@@ -69,13 +69,13 @@ function player:update(dt)
 	-- This code was based off the psuedocode from the Sonic Physics Guide,
 	-- I use it for all platformers because it works and provides a nice
 	-- place to start with most platformers.
-	local acc = 0.046875 * dt * 360
-	local dec = 0.5      * dt * 720
-	local frc = 0.35     * dt * 720
-	local top = 4 * dt
+	local acc = 120 * dt
+	local dec = 120 * dt
+	local frc = 100 * dt
+	local top = 1000 * dt
 
 	if self.yv ~= 0 then -- bunnyhop support ;)
-		top = top * 1.75
+		top = top * 1.5
 	end
 
 	if kl then -- if holding left
@@ -238,5 +238,5 @@ end
 
 function player:jump()
 	self.canjump = false
-	self.yv = -17.5
+	self.yv = -20
 end
