@@ -19,7 +19,7 @@ function love.conf(t)
 	t.window.width = default_width
 	t.window.height = default_height
 	t.window.borderless = false
-	t.window.resizable = false
+	t.window.resizable = true
 	t.window.minwidth = 1
 	t.window.minheight = 1
 	t.window.fullscreen = false
