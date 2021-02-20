@@ -1,3 +1,4 @@
+local la = love.audio
 local lg = love.graphics
 local lk = love.keyboard
 
@@ -15,6 +16,9 @@ whip_angle = 0
 
 local earlyjumptimermax = 0.1
 local coyotetimermax = 0.15
+
+local sfx_hurt = {}
+for i=1,3 do sfx_hurt[i] = la.newSource("sfx/player_hurt"..i..".wav", "static") end
 
 function player:init(x, y)
 	self.x, self.y = x, y
@@ -189,6 +193,9 @@ function player:update(dt)
 				if v.normalY ~= 0 then self.yv = 0 end
 				self.state = "hurt"
 				self.health = self.health - 1
+				local sfx = math.random(#sfx_hurt)
+				sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_hurt[sfx]:play()
 			end
 		end
 	end
