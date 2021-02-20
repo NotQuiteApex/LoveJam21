@@ -6,7 +6,7 @@ player = class:new()
 whip_timer = 0
 whip_max = 9
 whip_freeze = 0
-whip_freeze_max = 6
+whip_freeze_max = 18
 whip_hit_buffer = 2
 player_facing = 1
 whip_calc = 0
@@ -64,10 +64,12 @@ function player:update(dt)
 	--if lk.isDown("a") then self.xv = self.xv - 20*dt end
 	--if lk.isDown("d") then self.xv = self.xv + 20*dt end
 	
-	if self.xv < 0 then
-		player_facing = -1
-	elseif self.xv > 0 then
-		player_facing = 1
+	if whip_timer == 0 then
+		if self.xv < 0 then
+			player_facing = -1
+		elseif self.xv > 0 then
+			player_facing = 1
+		end
 	end
 
 	-- ##################
@@ -121,7 +123,6 @@ function player:update(dt)
 	-- variable height jump
 	
 	if n_key == _PRESS then
-		print(self.coyotetimer)
 		if self.canjump and (self.yv == 0 or self.coyotetimer < coyotetimermax) then
 			self:jump()
 		else
@@ -219,6 +220,9 @@ function player:draw()
 		lg.push()
 		lg.translate(30, 41)
 		lg.rotate(math.rad(whip_angle))
+		if whip_freeze ~= 0 then
+			lg.scale(1.5, 1)
+		end
 		lg.translate(-70, -41)
 		polygon.draw(mdl_whip)
 		lg.pop()

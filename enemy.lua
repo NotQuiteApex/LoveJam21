@@ -20,32 +20,14 @@ function enemy:init(x, y, model, kind)
 end
 
 function enemy:update(dt)
-
-	local i = 1
-	while i <= #enemy_data do
-		
-		if enemy_data[i].kind == ENEMY_GOOMBA then
-
-			enemy_data[i].x = enemy_data[i].x - 120 * dt
-		
-		end
-		
-		i = i + 1
+	if self.kind == ENEMY_GOOMBA then
+		self.x = self.x - 120 * dt
 	end
-
 end
 
 function enemy:draw()
-
-	local i = 1
-	while i <= #enemy_data do
-		
-		lg.push()
-		lg.translate(enemy_data[i].x, enemy_data[i].y)
-		polygon.draw(enemy_cache[enemy_data[i].model])
-		lg.pop()
-		
-		i = i + 1
-	end
-
+	lg.push()
+	lg.translate(self.x, self.y)
+	polygon.draw(enemy_cache[self.model])
+	lg.pop()
 end

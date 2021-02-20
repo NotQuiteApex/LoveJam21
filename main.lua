@@ -17,7 +17,7 @@ local lw = love.window
 
 -- deleting these breaks polygon.lua
 c_white = {1,1,1,1}
-c_black = {1,1,1,1}
+c_black = {0,0,0,1}
 
 global_music_volume = 1
 
@@ -172,24 +172,14 @@ function drawGame()
 	if rnd == 1 then rnd = 0.5 end
 	lg.translate(lume.round(-camera_x + half_width, rnd),0) --lume.round(-camera_y + half_height, rnd)
 
-	-- local px, py = 0, 0
-	
-	-- px = lume.round(player_x, rnd)
-	-- py = lume.round(player_y, rnd)
-	
-	-- if player_h_release == 1 then
-	-- lg.scale(-1,1)
-	-- lg.translate((-px-(ent_player.width*ent_player.xscale)),py)
-	-- else
-	-- lg.translate(px, py)
-	-- end
-	
-	-- polygon.draw(ent_player)
+
 	for i,v in ipairs(tiles) do
 		v:draw()
 	end
-	
-	enemy:draw()
+
+	for i, v in ipairs(enemy_data) do
+		v:draw()
+	end
 
 	ent_player:draw()
 
@@ -228,8 +218,11 @@ function love.update(dt)
 		setDefaultWindow(not isfs)
 	end
 
+	for i, v in ipairs(enemy_data) do
+		v:update(dt)
+	end
+
 	ent_player:update(dt)
-	enemy:update(dt)
 	
 	-- QUIT
 	if escape_key == _PRESS then
