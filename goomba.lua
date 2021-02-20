@@ -10,7 +10,10 @@ function goomba:init(x, y)
 	self.yv = 0
 	self.xv = -1
 
+	self.isEnemy = true
 	self.type = "goomba"
+
+	self.deleteself = false
 
 	bumpwrld:add(self, self.x, self.y, 60, 60)
 end
@@ -61,4 +64,9 @@ function goomba:draw()
 	end
 	polygon.draw(model)
 	lg.pop()
+end
+
+function goomba:delete()
+	bumpwrld:remove(self)
+	-- spawn gibs?
 end

@@ -199,7 +199,7 @@ function drawGame()
 	lg.push()
 	lg.scale(1/font_scale)
 	local text_scale = font_scale/1
-	lg.print("health: " .. health,math.floor(32*text_scale),math.floor(32*text_scale), 0, font_scale)
+	lg.print("health: " .. ent_player.health,math.floor(32*text_scale),math.floor(32*text_scale), 0, font_scale)
 	lg.pop()
 
 end
@@ -227,8 +227,12 @@ function love.update(dt)
 		v:update(dt)
 	end
 
-	for i, v in ipairs(goombas) do
+	for i, v in lume.ripairs(goombas) do
 		v:update(dt)
+		if v.deleteself then
+			v:delete()
+			table.remove(goombas, i)
+		end
 	end
 
 	ent_player:update(dt)

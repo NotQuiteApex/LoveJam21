@@ -12,7 +12,6 @@ player_facing = 1
 whip_calc = 0
 whip_angle = 0
 
-health = 11
 
 local earlyjumptimermax = 0.1
 local coyotetimermax = 0.15
@@ -21,12 +20,18 @@ function player:init(x, y)
 	self.x, self.y = x, y
 	self.xv, self.yv = 0, 0
 
+	self.health = 11
+
 	self.canjump = false
 	self.earlyjump = false
 	self.earlyjumptimer = 0
 	self.coyotetimer = 0
 
 	self.type = "player"
+
+	self.state = "normal" -- normal, hurt, grappled
+
+	self.appliedhurtimpulse = false
 
 	bumpwrld:add(self, x, y, 60, 60)
 end
@@ -91,23 +96,25 @@ function player:update(dt)
 		dec = dec / 2
 	end
 
-	if kl then -- if holding left
-		if self.xv > 0 then -- if going right
-			self.xv = self.xv - dec
-			if self.xv <= 0 then self.xv = -0.5 end
-		elseif self.xv > -top then -- if going left
-			self.xv = self.xv - acc
-			if self.xv <= -top then self.xv = -top end
+	if self.state == "normal" then
+		if kl then -- if holding left
+			if self.xv > 0 then -- if going right
+				self.xv = self.xv - dec
+				if self.xv <= 0 then self.xv = -0.5 end
+			elseif self.xv > -top then -- if going left
+				self.xv = self.xv - acc
+				if self.xv <= -top then self.xv = -top end
+			end
 		end
-	end
 
-	if kr then -- if holding right
-		if self.xv < 0 then -- if moving left
-			self.xv = self.xv + dec
-			if self.xv >= 0 then self.xv = 0.5 end
-		elseif self.xv < top then -- if moving right
-			self.xv = self.xv + acc
-			if self.xv >= top then self.xv = top end
+		if kr then -- if holding right
+			if self.xv < 0 then -- if moving left
+				self.xv = self.xv + dec
+				if self.xv >= 0 then self.xv = 0.5 end
+			elseif self.xv < top then -- if moving right
+				self.xv = self.xv + acc
+				if self.xv >= top then self.xv = top end
+			end
 		end
 	end
 
@@ -146,6 +153,9 @@ function player:update(dt)
 	-- ##################
 	-- collision filter, for determining how things should react on contact
 	local function filter(i, o)
+		if o.isEnemy then
+			return "cross"
+		end
 		return "slide"
 	end
 
@@ -173,7 +183,23 @@ function player:update(dt)
 					self.coyotetimer = 0
 				end
 			end
+		elseif o.isEnemy then
+			if self.state ~= "hurt" then
+				if v.normalX ~= 0 then self.xv = 0 end
+				if v.normalY ~= 0 then self.yv = 0 end
+				self.state = "hurt"
+				self.health = self.health - 1
+			end
 		end
+	end
+
+	if self.state == "hurt" and not self.appliedhurtimpulse then
+		self.xv = -player_facing * 10
+		self.yv = -20
+		self.appliedhurtimpulse = true
+	elseif self.state == "hurt" and self.yv == 0 then
+		self.state = "normal"
+		self.appliedhurtimpulse = false
 	end
 
 	-- finalize collision
@@ -242,7 +268,9 @@ function player:update(dt)
 		local v
 		for i = 1, len do
 			v = items[i]
-			
+			if v.type == "goomba" then
+				v.deleteself = true
+			end
 		end
 	end
 end
