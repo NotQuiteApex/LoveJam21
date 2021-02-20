@@ -7,6 +7,7 @@ class = require "engine.class"
 bump = require "engine.bump"
 
 require "goomba"
+require "cookie"
 require "enemy"
 require "tile"
 require "player"
@@ -48,6 +49,8 @@ escape_key = _OFF
 f4_key = _OFF
 
 font_scale = 2
+
+local updateables = {"tiles", "goombas", "cookies"}
 
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
@@ -124,7 +127,7 @@ function love.load()
 			elseif m == "g" then -- (g)host
 				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "ghost.soda", ENEMY_GHOST)
 			elseif m == "c" then -- (c)ookie
-				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "cookie.soda", ENEMY_COOKIE)
+				cookies[#cookies+1] = cookie:new((x-1)*80, (y-1)*80)
 			elseif m == "o" then -- g(o)omba
 				goombas[#goombas+1] = goomba:new((x-1)*80, (y-1)*80)
 			end
@@ -173,17 +176,14 @@ function drawGame()
 	if rnd == 1 then rnd = 0.5 end
 	lg.translate(lume.round(-camera_x + half_width, rnd),0) --lume.round(-camera_y + half_height, rnd)
 
-
-	for i,v in ipairs(tiles) do
-		v:draw()
-	end
-
 	for i, v in ipairs(enemy_data) do
 		v:draw()
 	end
 
-	for i, v in ipairs(goombas) do
-		v:draw()
+	for _,U in ipairs(updateables) do
+		for i, v in ipairs(_G[U]) do
+			v:draw()
+		end
 	end
 
 	ent_player:draw()
@@ -227,11 +227,13 @@ function love.update(dt)
 		v:update(dt)
 	end
 
-	for i, v in lume.ripairs(goombas) do
-		v:update(dt)
-		if v.deleteself then
-			v:delete()
-			table.remove(goombas, i)
+	for _,U in ipairs(updateables) do
+		for i, v in lume.ripairs(_G[U]) do
+			v:update(dt)
+			if v.deleteself then
+				v:delete()
+				table.remove(_G[U], i)
+			end
 		end
 	end
 

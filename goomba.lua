@@ -66,6 +66,10 @@ function goomba:draw()
 	lg.pop()
 end
 
+function goomba:damage()
+	self.deleteself = true
+end
+
 function goomba:delete()
 	bumpwrld:remove(self)
 	-- spawn gibs?

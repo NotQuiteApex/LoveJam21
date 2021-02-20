@@ -275,8 +275,8 @@ function player:update(dt)
 		local v
 		for i = 1, len do
 			v = items[i]
-			if v.type == "goomba" then
-				v.deleteself = true
+			if v.damage then
+				v:damage()
 			end
 		end
 	end
