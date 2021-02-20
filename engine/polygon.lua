@@ -124,7 +124,7 @@ function polygon.draw(tbl)
 		lg.rectangle("line", 0, 0, tbl.width * tbl.xscale, tbl.height * tbl.yscale)
 	end
 
-	lg.setColor(1,1,1)
+	lg.setColor(c_white)
 end
 
 function polygon.lengthdir_x(length, dir)

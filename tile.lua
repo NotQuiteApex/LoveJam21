@@ -5,7 +5,7 @@ tiles = {}
 
 local tilecache = {}
 
-function tile:init(x, y, style)
+function tile:init(x, y, style, solid)
 	self.x = x
 	self.y = y
 	self.style = style
@@ -13,10 +13,15 @@ function tile:init(x, y, style)
 		tilecache[style] = polygon.new("soda/"..style)
 	end
 
+	if solid then
 	self.type = "ground"
 
 	-- collision
 	bumpwrld:add(self, x, y, 80, 80)
+	else
+	self.type = "decor"
+	end
+
 end
 
 function tile:update(dt)

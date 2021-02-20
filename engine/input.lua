@@ -7,6 +7,20 @@ _RELEASE = 3
 
 mouse_switch = _OFF
 
+r_key = _OFF
+n_key = _OFF
+m_key = _OFF
+lalt_key = _OFF
+ralt_key = _OFF
+enter_key = _OFF
+escape_key = _OFF
+f4_key = _OFF
+
+up_key = _OFF
+down_key = _OFF
+left_key = _OFF
+right_key = _OFF
+
 function input.combo(a, b)
 	return (a == _ON and b == _PRESS) or (a == _PRESS and b == _ON) or (a == _PRESS and b == _PRESS)
 end
@@ -50,6 +64,8 @@ function input.update(dt)
 	mouse_switch = input.pullSwitch(love.mouse.isDown(1), mouse_switch)
 	
 	r_key = input.pullSwitch(love.keyboard.isDown("r"), r_key)
+	n_key = input.pullSwitch(love.keyboard.isDown("n"), n_key)
+	m_key = input.pullSwitch(love.keyboard.isDown("m"), m_key)
 	lalt_key = input.pullSwitch(love.keyboard.isDown("lalt"), lalt_key)
 	ralt_key = input.pullSwitch(love.keyboard.isDown("ralt"), ralt_key)
 	enter_key = input.pullSwitch(love.keyboard.isDown("return"), enter_key)

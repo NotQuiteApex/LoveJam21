@@ -3,7 +3,16 @@ local lk = love.keyboard
 
 player = class:new()
 
-local sprite = polygon.new("soda/THEGUY.soda")
+whip_timer = 0
+whip_max = 9
+whip_freeze = 0
+whip_freeze_max = 6
+whip_hit_buffer = 2
+player_facing = 1
+whip_calc = 0
+whip_angle = 0
+
+health = 11
 
 local earlyjumptimermax = 0.1
 
@@ -26,6 +35,8 @@ function player:update(dt)
 			self.earlyjumptimer = 0
 		end
 	end
+	
+	camera_x = self.x-- + default_width/2
 
 	-- ##################
 	-- Input handling
@@ -34,16 +45,22 @@ function player:update(dt)
 	local kl, kr
 	kl = lk.isDown("left")   -- move left
 	kr = lk.isDown("right")  -- move right
-	kx = lk.isDown("x")      -- jump
-	kz = lk.isDown("z")      -- whip
+	--kx = lk.isDown("n")      -- jump
+	--kz = lk.isDown("m")      -- whip
 	-- Turn booleans into integers
 	local il, ir
 	il = kl and 1 or 0
 	ir = kr and 1 or 0
 	dx = ir-il
 
-	if lk.isDown("a") then self.xv = self.xv - 200*dt end
-	if lk.isDown("d") then self.xv = self.xv + 200*dt end
+	if lk.isDown("a") then self.xv = self.xv - 60*dt end
+	if lk.isDown("d") then self.xv = self.xv + 60*dt end
+	
+	if self.xv < 0 then
+		player_facing = -1
+	elseif self.xv > 0 then
+		player_facing = 1
+	end
 
 	-- ##################
 	-- Movement handling
@@ -94,7 +111,16 @@ function player:update(dt)
 	-- Gravity handling:
 	-- ##################
 	-- variable height jump
-	if not lk.isDown("x") and self.yv < 0 then
+	
+	if n_key == _PRESS then
+		if self.canjump and self.yv == 0 then
+			self:jump()
+		else
+			self.earlyjump = true
+		end
+	end
+	
+	if n_key == _OFF and self.yv < 0 then
 		self.yv = self.yv / 1.075
 	end
 
@@ -135,27 +161,79 @@ function player:update(dt)
 			end
 		end
 	end
+	
+	-- whip attack
+	if m_key == _PRESS and whip_timer == 0 then
+		whip_timer = 1
+	end
+	
+	if whip_timer ~= 0 then
+		whip_timer = math.min(whip_timer + dt * 60, whip_max)
+	end
+	
+	if whip_timer == whip_max and whip_freeze == 0 then
+		--whip_timer = 0
+		whip_freeze = 1
+	end
+	
+	if whip_freeze ~= 0 then
+		whip_freeze = math.min(whip_freeze + 60 * dt, whip_freeze_max)
+	end
+	
+	if whip_freeze == whip_freeze_max then
+		whip_timer = 0
+		whip_freeze = 0
+	end
+	
+	whip_calc = whip_timer/whip_max
+	whip_angle = -30 + (whip_calc * 210)
 
 	-- finalize collision
 	self.x, self.y = ax, ay
 end
 
 function player:draw()
-	lg.push()
-	lg.translate(self.x-6, self.y-16)
-	lg.rectangle("line", 6, 16, 60, 60) --bbox
-	polygon.draw(sprite)
-	lg.pop()
-end
 
-function player:keypressed(k)
-	if k == "x" then
-		if self.canjump and self.yv == 0 then
-			self:jump()
-		else
-			self.earlyjump = true
-		end
+	local x_draw = self.x-6
+	if player_facing == -1 then
+	lg.push()
+	x_draw = -self.x-58
+	lg.scale(-1,1)
 	end
+	
+	lg.push()
+	lg.translate(x_draw, self.y-16)
+	
+	if whip_timer ~= 0 then
+	
+		lg.push()
+		lg.translate(30, 41)
+		lg.rotate(math.rad(whip_angle))
+		lg.translate(-70, -41)
+		polygon.draw(mdl_whip)
+		lg.pop()
+	
+	end
+	
+	polygon.draw(mdl_player)
+	lg.pop()
+	
+	if player_facing == -1 then
+	lg.pop()
+	end
+	
+	--[[
+	arm hit box
+	
+	if player_facing == -1 then
+		lg.setColor(1,1,1,1)
+		lg.circle("fill", self.x-6 + 32 + polygon.lengthdir_x(80, math.rad(whip_angle)), self.y-16 + 40 + polygon.lengthdir_y(80, math.rad(whip_angle)), 10)
+	else
+		lg.setColor(1,1,1,1)
+		lg.circle("fill", self.x-6 + 32 + polygon.lengthdir_x(-80, math.rad(-whip_angle)), self.y-16 + 40 + polygon.lengthdir_y(-80, math.rad(-whip_angle)), 10)
+	end
+	
+	]]
 end
 
 function player:jump()

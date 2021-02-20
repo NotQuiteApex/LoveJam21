@@ -4,13 +4,20 @@ lume = require "engine.lume"
 class = require "engine.class"
 bump = require "engine.bump"
 
+require "enemy"
 require "tile"
 require "player"
 
-local lg = love.graphics
+lg = love.graphics
 local lk = love.keyboard
 local lm = love.mouse
 local lw = love.window
+
+-- deleting these breaks polygon.lua
+c_white = {1,1,1,1}
+c_black = {1,1,1,1}
+
+global_music_volume = 1
 
 window_scale = 1
 window_x_offset = 0
@@ -60,34 +67,68 @@ function love.load()
 
 	bumpwrld = bump.newWorld(80)
 	
-	grass = polygon.new("soda/grass.soda")
+	mdl_player = polygon.new("soda/THEGUY.soda")
+	mdl_player.bbox_visible = true
+	mdl_whip = polygon.new("soda/THEGUYARM.soda")
+	
+	mdl_swiper = polygon.new("soda/swiper.soda")
+	mdl_strawberry = polygon.new("soda/strawberry.soda")
+	mdl_goomba = polygon.new("soda/goomba.soda")
+	mdl_ghost = polygon.new("soda/ghost.soda")
+	mdl_cookie = polygon.new("soda/cookie.soda")
 	
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24
 
 	map = {
-		"#              #",
-		"#              #",
-		"#              #",
-		"#              #",
-		"# P            #",
-		"####           #",
-		"#              #",
-		"#              #",
-		"################",
+		"#        I F           I             I F          I             I F            #",
+		"#  WW    I             I             I            I       G     I          WW  #",
+		"#  WW    I             I       WW    I            I             I          WW  #",
+		"#        I             I       WW    I   c bb c   I      c c    I              #",
+		"# P      I             I             I ^^^^^^^^   I  ^^^^^^^^   I              #",
+		"####     I      g      I             I^^          I             I              #",
+		"# T      I             I    ^^     ^^^^      s    I     T   s   I        T     #",
+		"#        I   ^^     oo I  ^^^^^      I            I             I   oo         #",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
 	local m
 	for y=1,9 do
-		for x=1,16 do
+		for x=1,80 do
 			m = map[y]:sub(x,x)
-			if m == "#" then
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "grass.soda")
-			elseif m == "P" then
+			if m == "#" then -- brick wall
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "brick.soda", true)
+			elseif m == "P" then -- player
 				ent_player = player:new((x-1)*80, (y-1)*80)
+			elseif m == "$" then -- floor
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "brick2.soda", true)
+			elseif m == "^" then -- spikes
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "brick3.soda", true)
+			elseif m == "W" then -- (W)indow
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "window.soda", false)
+			elseif m == "T" then -- (T)ree
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "itsatree.soda", false)
+			elseif m == "I" then -- P(I)llar
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "pillar.soda", false)
+			elseif m == "G" then -- pillar (G)uy
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "pillarguy.soda", false)
+			elseif m == "F" then -- (F)lag
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "flag.soda", false)
+			elseif m == "s" then -- (s)wiper
+				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "swiper.soda", ENEMY_SWIPER)
+			elseif m == "b" then -- straw(b)erry
+				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "strawberry.soda", ENEMY_STRAWBERRY)
+			elseif m == "g" then -- (g)host
+				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "ghost.soda", ENEMY_GHOST)
+			elseif m == "c" then -- (c)ookie
+				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "cookie.soda", ENEMY_COOKIE)
+			elseif m == "o" then -- g(o)omba
+				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "goomba.soda", ENEMY_GOOMBA)
 			end
 		end
 	end
+	
+	--print_r(tiles)
 end
 
 function love.draw()
@@ -127,7 +168,7 @@ function drawGame()
 	
 	local rnd = (default_width/(window_scale*default_width))
 	if rnd == 1 then rnd = 0.5 end
-	--lg.translate(lume.round(-camera_x + half_width, rnd),lume.round(-camera_y + half_height, rnd))
+	lg.translate(lume.round(-camera_x + half_width, rnd),0) --lume.round(-camera_y + half_height, rnd)
 
 	-- local px, py = 0, 0
 	
@@ -145,6 +186,8 @@ function drawGame()
 	for i,v in ipairs(tiles) do
 		v:draw()
 	end
+	
+	enemy:draw()
 
 	ent_player:draw()
 
@@ -155,12 +198,12 @@ function drawGame()
 	lg.rectangle("fill", 0, 0, 1280, 80)
 	
 	-- TODO: simplify text stuff
-	-- lg.setColor({1,1,1,1})
-	-- lg.push()
-	-- lg.scale(1/font_scale)
-	-- local text_scale = font_scale/1
-	-- lg.print("buf buf",math.floor(default_width*text_scale) - font:getWidth("buf buf") - 96,math.floor(32*text_scale))
-	-- lg.pop()
+	lg.setColor({1,1,1,1})
+	lg.push()
+	lg.scale(1/font_scale)
+	local text_scale = font_scale/1
+	lg.print("health: " .. health,math.floor(32*text_scale),math.floor(32*text_scale))
+	lg.pop()
 
 end
 
@@ -184,6 +227,7 @@ function love.update(dt)
 	end
 
 	ent_player:update(dt)
+	enemy:update(dt)
 	
 	-- QUIT
 	if escape_key == _PRESS then
@@ -206,12 +250,6 @@ end
 
 function love.resize(w, h)
 	updateWindowScale(w, h)
-end
-
-function love.keypressed(k)
-	if ent_player then
-		ent_player:keypressed(k)
-	end
 end
 
 function hsl(h, s, l, a)
