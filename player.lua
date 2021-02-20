@@ -62,6 +62,16 @@ function player:update(dt)
 	
 	camera_x = self.x-- + default_width/2
 
+	if self.iframesactive then
+		self.iframeseffect = not self.iframeseffect
+		self.iframes = self.iframes + dt
+		if self.iframes > iframesmax then
+			self.iframesactive = false
+			self.iframeseffect = false
+			self.iframes = 0
+		end
+	end
+
 	-- ##################
 	-- Input handling
 	-- ##################
@@ -193,7 +203,7 @@ function player:update(dt)
 				end
 			end
 		elseif o.isEnemy then
-			if self.state ~= "hurt" then
+			if self.state ~= "hurt" and not self.iframesactive then
 				if v.normalX ~= 0 then self.xv = 0 end
 				if v.normalY ~= 0 then self.yv = 0 end
 				self.state = "hurt"
@@ -219,6 +229,7 @@ function player:update(dt)
 	elseif self.state == "hurt" and self.yv == 0 then
 		self.state = "normal"
 		self.appliedhurtimpulse = false
+		self.iframesactive = true
 	end
 
 	-- finalize collision
@@ -320,7 +331,9 @@ function player:draw()
 	
 	end
 	
-	polygon.draw(mdl_player)
+	if not self.iframesactive or self.iframeseffect then
+		polygon.draw(mdl_player)
+	end
 	lg.pop()
 	
 	if player_facing == -1 then
