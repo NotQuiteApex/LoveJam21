@@ -19,7 +19,13 @@ function player:init(x, y)
 end
 
 function player:update(dt)
-	self.earlyjumptimer = self.earlyjumptimer + dt
+	if self.earlyjump then
+		self.earlyjumptimer = self.earlyjumptimer + dt
+		if self.earlyjumptimer > earlyjumptimermax then
+			self.earlyjump = false
+			self.earlyjumptimer = 0
+		end
+	end
 
 	-- ##################
 	-- Input handling
@@ -120,6 +126,11 @@ function player:update(dt)
 				self.yv = 0
 				if v.normalY == -1 then
 					self.canjump = true
+					if self.earlyjump then
+						self.earlyjump = false
+						self.earlyjumptimer = 0
+						self:jump()
+					end
 				end
 			end
 		end
