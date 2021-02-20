@@ -57,7 +57,6 @@ function love.load()
 	-- Loading models
 	font = lg.newFont("font.ttf", 18*font_scale)
 	lg.setFont(font)
-	lg.setBackgroundColor(0, 0.25, 0.25)
 
 	bumpwrld = bump.newWorld(80)
 	
@@ -71,10 +70,10 @@ function love.load()
 		"#              #",
 		"#              #",
 		"#              #",
-		"#              #",
-		"#              #",
-		"#              #",
 		"# P            #",
+		"####           #",
+		"#              #",
+		"#              #",
 		"################",
 	}
 
@@ -100,9 +99,6 @@ function love.draw()
 	
 	-- Push the game window over, creates black bars if the window isn't the same aspect ratio as what the game's expecting
 	if center_fullscreen_window then
-		lg.setColor(WINDOW_BG)
-		lg.rectangle("fill", 0, 0, screen_width, screen_height)
-		
 		lg.push()
 		lg.translate(window_x_offset, window_y_offset)
 	end
@@ -123,6 +119,8 @@ function love.draw()
 end
 
 function drawGame()
+	lg.setColor(0, 0.25, 0.25)
+	lg.rectangle("fill", 0, 0, default_width, default_height)
 	lg.push()
 	lg.translate(0, 80)
 	local half_width, half_height = default_width / 2, math.floor(default_height / 2)

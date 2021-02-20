@@ -5,16 +5,21 @@ player = class:new()
 
 local sprite = polygon.new("soda/THEGUY.soda")
 
+local earlyjumptimermax = 0.1
+
 function player:init(x, y)
 	self.x, self.y = x, y
 	self.xv, self.yv = 0, 0
 
 	self.canjump = false
+	self.earlyjump = false
+	self.earlyjumptimer = 0
 
 	bumpwrld:add(self, x, y, 60, 60)
 end
 
 function player:update(dt)
+	self.earlyjumptimer = self.earlyjumptimer + dt
 
 	-- ##################
 	-- Input handling
@@ -41,13 +46,13 @@ function player:update(dt)
 	-- This code was based off the psuedocode from the Sonic Physics Guide,
 	-- I use it for all platformers because it works and provides a nice
 	-- place to start with most platformers.
-	local acc = 0.046875 * dt * 480
+	local acc = 0.046875 * dt * 360
 	local dec = 0.5      * dt * 720
 	local frc = 0.35     * dt * 720
-	local top = 6        *3/4
+	local top = 4 * dt
 
 	if self.yv ~= 0 then -- bunnyhop support ;)
-		top = top * 2
+		top = top * 1.75
 	end
 
 	if kl then -- if holding left
@@ -126,8 +131,8 @@ end
 
 function player:draw()
 	lg.push()
-	lg.translate(self.x-6, self.y-14)
-	lg.rectangle("line", 6, 14, 60, 60)
+	lg.translate(self.x-6, self.y-16)
+	lg.rectangle("line", 6, 16, 60, 60) --bbox
 	polygon.draw(sprite)
 	lg.pop()
 end
@@ -135,8 +140,14 @@ end
 function player:keypressed(k)
 	if k == "x" then
 		if self.canjump and self.yv == 0 then
-			self.canjump = false
-			self.yv = -17.5
+			self:jump()
+		else
+			self.earlyjump = true
 		end
 	end
+end
+
+function player:jump()
+	self.canjump = false
+	self.yv = -17.5
 end
