@@ -6,6 +6,7 @@ lume = require "engine.lume"
 class = require "engine.class"
 bump = require "engine.bump"
 
+require "goomba"
 require "enemy"
 require "tile"
 require "player"
@@ -125,7 +126,7 @@ function love.load()
 			elseif m == "c" then -- (c)ookie
 				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "cookie.soda", ENEMY_COOKIE)
 			elseif m == "o" then -- g(o)omba
-				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "goomba.soda", ENEMY_GOOMBA)
+				goombas[#goombas+1] = goomba:new((x-1)*80, (y-1)*80)
 			end
 		end
 	end
@@ -181,6 +182,10 @@ function drawGame()
 		v:draw()
 	end
 
+	for i, v in ipairs(goombas) do
+		v:draw()
+	end
+
 	ent_player:draw()
 
 
@@ -219,6 +224,10 @@ function love.update(dt)
 	end
 
 	for i, v in ipairs(enemy_data) do
+		v:update(dt)
+	end
+
+	for i, v in ipairs(goombas) do
 		v:update(dt)
 	end
 

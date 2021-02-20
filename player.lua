@@ -26,6 +26,8 @@ function player:init(x, y)
 	self.earlyjumptimer = 0
 	self.coyotetimer = 0
 
+	self.type = "player"
+
 	bumpwrld:add(self, x, y, 60, 60)
 end
 
@@ -173,17 +175,41 @@ function player:update(dt)
 			end
 		end
 	end
+
+	-- finalize collision
+	self.x, self.y = ax, ay
+
 	
 	-- whip attack
 	if m_key == _PRESS and whip_timer == 0 then
 		whip_timer = 1
 	end
+
+	-- collision items and filter
+	local len, items = 0
+	local function filter(i)
+		return not (i.type == "ground" or i.type == "player")
+	end
 	
 	if whip_timer ~= 0 then
 		if whip_timer < whip_max / 2 then
 			whip_timer = math.min(whip_timer + dt * 30, whip_max)
+
+			-- grab backwhip collisions here
+			if player_facing == -1 then
+				items, len = bumpwrld:queryRect(self.x +38-4, self.y - 42, 58, 58)
+			else
+				items, len = bumpwrld:queryRect(self.x - 38, self.y - 42, 58, 58)
+			end
 		else
 			whip_timer = math.min(whip_timer + dt * 60, whip_max)
+
+			-- grab frontwhip collisions here
+			if player_facing == -1 then
+				items, len = bumpwrld:queryRect(self.x +28-48-4, self.y - 42, 58, 58)
+			else
+				items, len = bumpwrld:queryRect(self.x - 28+48, self.y - 42, 58, 58)
+			end
 		end
 	end
 	
@@ -194,6 +220,13 @@ function player:update(dt)
 	
 	if whip_freeze ~= 0 then
 		whip_freeze = math.min(whip_freeze + 60 * dt, whip_freeze_max)
+
+		-- grab whip arm collisions here
+		if player_facing == -1 then
+			items, len = bumpwrld:queryRect(self.x -200+42, self.y + 16, 200, 16)
+		else
+			items, len = bumpwrld:queryRect(self.x + 12, self.y + 16, 200, 16)
+		end
 	end
 	
 	if whip_freeze == whip_freeze_max then
@@ -204,8 +237,14 @@ function player:update(dt)
 	whip_calc = whip_timer/whip_max
 	whip_angle = -30 + (whip_calc * 210)
 
-	-- finalize collision
-	self.x, self.y = ax, ay
+	-- handle whip collisions here
+	if len > 0 then
+		local v
+		for i = 1, len do
+			v = items[i]
+			
+		end
+	end
 end
 
 function player:draw()
@@ -241,18 +280,33 @@ function player:draw()
 	lg.pop()
 	end
 	
-	--[[
-	arm hit box
 	
-	if player_facing == -1 then
+	--arm hit box
+	if whip_timer ~= 0 then
 		lg.setColor(1,1,1,1)
-		lg.circle("fill", self.x-6 + 32 + polygon.lengthdir_x(80, math.rad(whip_angle)), self.y-16 + 40 + polygon.lengthdir_y(80, math.rad(whip_angle)), 10)
-	else
-		lg.setColor(1,1,1,1)
-		lg.circle("fill", self.x-6 + 32 + polygon.lengthdir_x(-80, math.rad(-whip_angle)), self.y-16 + 40 + polygon.lengthdir_y(-80, math.rad(-whip_angle)), 10)
+		if whip_freeze ~= 0 then
+			if player_facing == -1 then
+				lg.rectangle("line", self.x -200+42, self.y + 16, 200, 16)
+			else
+				lg.rectangle("line", self.x + 12, self.y + 16, 200, 16)
+			end
+		else
+			if whip_timer < whip_max /2 then
+				if player_facing == -1 then
+					lg.rectangle("line", self.x +38-4, self.y - 42, 58, 58)
+				else
+					lg.rectangle("line", self.x - 38, self.y - 42, 58, 58)
+				end
+			else
+				if player_facing == -1 then
+					lg.rectangle("line", self.x +28-48-4, self.y - 42, 58, 58)
+				else
+					lg.rectangle("line", self.x - 28+48, self.y - 42, 58, 58)
+				end
+			end
+		end
 	end
 	
-	]]
 end
 
 function player:jump()
