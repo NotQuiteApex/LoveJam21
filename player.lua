@@ -86,6 +86,7 @@ function player:update(dt)
 
 	if self.yv ~= 0 then -- bunnyhop support ;)
 		top = top * 1.5
+		dec = dec / 2
 	end
 
 	if kl then -- if holding left
@@ -179,7 +180,11 @@ function player:update(dt)
 	end
 	
 	if whip_timer ~= 0 then
-		whip_timer = math.min(whip_timer + dt * 60, whip_max)
+		if whip_timer < whip_max / 2 then
+			whip_timer = math.min(whip_timer + dt * 30, whip_max)
+		else
+			whip_timer = math.min(whip_timer + dt * 60, whip_max)
+		end
 	end
 	
 	if whip_timer == whip_max and whip_freeze == 0 then
@@ -221,7 +226,7 @@ function player:draw()
 		lg.translate(30, 41)
 		lg.rotate(math.rad(whip_angle))
 		if whip_freeze ~= 0 then
-			lg.scale(1.5, 1)
+			lg.scale(2, 1)
 		end
 		lg.translate(-70, -41)
 		polygon.draw(mdl_whip)

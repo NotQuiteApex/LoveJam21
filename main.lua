@@ -46,7 +46,7 @@ right_key = _OFF
 escape_key = _OFF
 f4_key = _OFF
 
-font_scale = 1
+font_scale = 2
 
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
@@ -194,7 +194,7 @@ function drawGame()
 	lg.push()
 	lg.scale(1/font_scale)
 	local text_scale = font_scale/1
-	lg.print("health: " .. health,math.floor(32*text_scale),math.floor(32*text_scale))
+	lg.print("health: " .. health,math.floor(32*text_scale),math.floor(32*text_scale), 0, font_scale)
 	lg.pop()
 
 end
