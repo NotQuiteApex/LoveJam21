@@ -1,3 +1,5 @@
+io.stdout:setvbuf("no") -- sublime text console
+
 polygon = require "engine.polygon"
 input = require "engine.input"
 lume = require "engine.lume"
@@ -213,7 +215,7 @@ function love.update(dt)
 	mouse_x, mouse_y = (love.mouse.getX() - window_x_offset) / window_scale, (love.mouse.getY() - window_y_offset) / window_scale
 	
 	-- update keys
-	input.update(dt)
+	input.update()
 	
 	-- Toggle fullscreen with alt + enter or F4
 	if input.altCombo(enter_key) or f4_key == _PRESS then

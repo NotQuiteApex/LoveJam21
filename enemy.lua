@@ -26,7 +26,7 @@ function enemy:update(dt)
 		
 		if enemy_data[i].kind == ENEMY_GOOMBA then
 
-			enemy_data[i].x = enemy_data[i].x - 0.25 * 60 * dt
+			enemy_data[i].x = enemy_data[i].x - 120 * dt
 		
 		end
 		

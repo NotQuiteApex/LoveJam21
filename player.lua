@@ -15,6 +15,7 @@ whip_angle = 0
 health = 11
 
 local earlyjumptimermax = 0.1
+local coyotetimermax = 0.15
 
 function player:init(x, y)
 	self.x, self.y = x, y
@@ -23,17 +24,24 @@ function player:init(x, y)
 	self.canjump = false
 	self.earlyjump = false
 	self.earlyjumptimer = 0
+	self.coyotetimer = 0
 
 	bumpwrld:add(self, x, y, 60, 60)
 end
 
 function player:update(dt)
+	-- Buffer jump input
 	if self.earlyjump then
 		self.earlyjumptimer = self.earlyjumptimer + dt
 		if self.earlyjumptimer > earlyjumptimermax then
 			self.earlyjump = false
 			self.earlyjumptimer = 0
 		end
+	end
+
+	-- Coyote time
+	if self.canjump then
+		self.coyotetimer = self.coyotetimer + dt
 	end
 	
 	camera_x = self.x-- + default_width/2
@@ -48,7 +56,7 @@ function player:update(dt)
 	--kx = lk.isDown("n")      -- jump
 	--kz = lk.isDown("m")      -- whip
 	-- Turn booleans into integers
-	local il, ir
+	local il, ir, dx
 	il = kl and 1 or 0
 	ir = kr and 1 or 0
 	dx = ir-il
@@ -113,7 +121,8 @@ function player:update(dt)
 	-- variable height jump
 	
 	if n_key == _PRESS then
-		if self.canjump and self.yv == 0 then
+		print(self.coyotetimer)
+		if self.canjump and (self.yv == 0 or self.coyotetimer < coyotetimermax) then
 			self:jump()
 		else
 			self.earlyjump = true
@@ -157,6 +166,7 @@ function player:update(dt)
 						self.earlyjumptimer = 0
 						self:jump()
 					end
+					self.coyotetimer = 0
 				end
 			end
 		end
@@ -239,4 +249,5 @@ end
 function player:jump()
 	self.canjump = false
 	self.yv = -20
+	self.coyotetimer = 0
 end
