@@ -1,6 +1,6 @@
 
 default_width = 1280
-default_height = 720
+default_height = 800
 
 function love.conf(t)
 	t.identity = ".achocolypse"

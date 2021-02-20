@@ -1,15 +1,12 @@
 polygon = require "engine.polygon"
 input = require "engine.input"
 lume = require "engine.lume"
+class = require "engine.class"
 
-lg = love.graphics
-lk = love.keyboard
+require "player"
 
-c_black = {0,0,0,1}
-c_white = {1,1,1,1}
-
-WINDOW_BG = c_black
-WINDOW_ASPECT_FIT = true
+local lg = love.graphics
+local lk = love.keyboard
 
 window_scale = 1
 window_x_offset = 0
@@ -36,12 +33,6 @@ right_key = _OFF
 escape_key = _OFF
 f4_key = _OFF
 
-player_x = 0
-player_y = 0
-
-camera_x = 0
-camera_y = 0
-
 font_scale = 1
 
 function setDefaultWindow(fs)
@@ -63,19 +54,12 @@ function love.load()
 	font = love.graphics.newFont("font.ttf", 18*font_scale)
 	love.graphics.setFont(font)
 	
-	player_x = half_width - 24
-	player_y = half_height + 48
+	grass = polygon.new("soda/grass.soda")
 	
-	test_level = polygon.new("soda/test-level.soda")
-	test_level.x = half_width - 256
-	test_level.y = half_height - 216
-	
-	ent_player = polygon.new("soda/one.soda")
-	ent_player.bbox_visible = false
-	
-	camera_x = player_x + 24
-	camera_y = player_y + 24
+	camera_x = 0--player_x + 24
+	camera_y = 0--player_y + 24
 
+	ent_player = player:new()
 end
 
 function love.draw()
@@ -121,22 +105,35 @@ function drawGame()
 	if rnd == 1 then rnd = 0.5 end
 	lg.translate(lume.round(-camera_x + half_width, rnd),lume.round(-camera_y + half_height, rnd))
 	
-	polygon.draw(test_level)
+	-- local px, py = 0, 0
 	
-	local px, py = 0, 0
+	-- px = lume.round(player_x, rnd)
+	-- py = lume.round(player_y, rnd)
 	
-	px = lume.round(player_x, rnd)
-	py = lume.round(player_y, rnd)
+	-- if player_h_release == 1 then
+	-- lg.scale(-1,1)
+	-- lg.translate((-px-(ent_player.width*ent_player.xscale)),py)
+	-- else
+	-- lg.translate(px, py)
+	-- end
 	
-	if player_h_release == 1 then
-	lg.scale(-1,1)
-	lg.translate((-px-(ent_player.width*ent_player.xscale)),py)
-	else
-	lg.translate(px, py)
-	end
-	
-	polygon.draw(ent_player)
+	-- polygon.draw(ent_player)
+
+
 	lg.pop()
+
+	lg.setColor(0.5, 1/32, 75/255)
+	lg.rectangle("fill", 0, 0, 1280, 80)
+	lg.setColor(math.random(),math.random(),math.random(),math.random())
+	for y=1,9 do
+		for x=1,16 do
+			lg.push()
+			lg.translate((x-1)*80, y*80)
+			polygon.draw(grass)
+			lg.pop()
+			--lg.rectangle("line", (x-1)*80, y*80, 80, 80)
+		end
+	end
 	
 	lg.setColor({1,1,1,1})
 	lg.push()
@@ -179,9 +176,6 @@ function updateWindowScale(w, h)
 	screen_height = h
 	
 	window_scale = math.min((w/default_width), (h/default_height))
-	if not WINDOW_ASPECT_FIT then
-		window_scale = math.floor(window_scale)
-	end
 
 	window_x_offset = (screen_width  - (default_width*window_scale))/2
 	window_y_offset = (screen_height - (default_height*window_scale))/2
