@@ -8,9 +8,6 @@ lk = love.keyboard
 c_black = {0,0,0,1}
 c_white = {1,1,1,1}
 
-default_width = 720
-default_height = 405
-
 WINDOW_BG = c_black
 WINDOW_ASPECT_FIT = true
 
@@ -60,8 +57,6 @@ function love.load()
 	font_scale = math.ceil(math.min((res_w/default_width), (res_h/default_height)))
 	
 	math.randomseed(os.time())
-	setDefaultWindow(false)
-	love.window.setTitle("engeene")
 	window_scale = math.floor(screen_width/default_width)
 	
 	-- Loading models
