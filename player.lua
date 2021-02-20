@@ -16,6 +16,7 @@ whip_angle = 0
 
 local earlyjumptimermax = 0.1
 local coyotetimermax = 0.15
+local iframesmax = 0.5
 
 local sfx_hurt = {}
 for i=1,3 do sfx_hurt[i] = la.newSource("sfx/player_hurt"..i..".wav", "static") end
@@ -30,6 +31,9 @@ function player:init(x, y)
 	self.earlyjump = false
 	self.earlyjumptimer = 0
 	self.coyotetimer = 0
+
+	self.iframes = 0
+	self.iframesactive = false
 
 	self.type = "player"
 
@@ -93,10 +97,10 @@ function player:update(dt)
 	local acc = 120 * dt
 	local dec = 120 * dt
 	local frc = 100 * dt
-	local top = 1000 * dt
+	local top = 10
 
 	if self.yv ~= 0 then -- bunnyhop support ;)
-		top = top * 1.5
+		top = top * 1.25
 		dec = dec / 2
 	end
 
@@ -193,6 +197,11 @@ function player:update(dt)
 				if v.normalY ~= 0 then self.yv = 0 end
 				self.state = "hurt"
 				self.health = self.health - 1
+				if v.normalX == 0 then
+					self.hitdirection = o.xv
+				else
+					self.hitdirection = v.normalX
+				end
 				local sfx = math.random(#sfx_hurt)
 				sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
 				sfx_hurt[sfx]:play()
@@ -201,7 +210,7 @@ function player:update(dt)
 	end
 
 	if self.state == "hurt" and not self.appliedhurtimpulse then
-		self.xv = -player_facing * 10
+		self.xv = self.hitdirection * 7
 		self.yv = -20
 		self.appliedhurtimpulse = true
 	elseif self.state == "hurt" and self.yv == 0 then
