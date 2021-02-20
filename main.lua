@@ -2,11 +2,15 @@ polygon = require "engine.polygon"
 input = require "engine.input"
 lume = require "engine.lume"
 class = require "engine.class"
+bump = require "engine.bump"
 
+require "tile"
 require "player"
 
 local lg = love.graphics
 local lk = love.keyboard
+local lm = love.mouse
+local lw = love.window
 
 window_scale = 1
 window_x_offset = 0
@@ -36,30 +40,55 @@ f4_key = _OFF
 font_scale = 1
 
 function setDefaultWindow(fs)
-	love.window.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
+	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
 end
 
 function love.load()
 	
 	local half_width, half_height = default_width / 2, math.floor(default_height / 2)
 	
-	local _, _, flags = love.window.getMode()
-	local res_w, res_h = love.window.getDesktopDimensions( flags.display )
+	local _, _, flags = lw.getMode()
+	local res_w, res_h = lw.getDesktopDimensions( flags.display )
 	font_scale = math.ceil(math.min((res_w/default_width), (res_h/default_height)))
 	
 	math.randomseed(os.time())
 	window_scale = math.floor(screen_width/default_width)
 	
 	-- Loading models
-	font = love.graphics.newFont("font.ttf", 18*font_scale)
-	love.graphics.setFont(font)
+	font = lg.newFont("font.ttf", 18*font_scale)
+	lg.setFont(font)
+	lg.setBackgroundColor(0, 0.25, 0.25)
+
+	bumpwrld = bump.newWorld(80)
 	
 	grass = polygon.new("soda/grass.soda")
 	
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24
 
-	ent_player = player:new()
+	map = {
+		"#              #",
+		"#              #",
+		"#              #",
+		"#              #",
+		"#              #",
+		"#              #",
+		"#              #",
+		"# P            #",
+		"################",
+	}
+
+	local m
+	for y=1,9 do
+		for x=1,16 do
+			m = map[y]:sub(x,x)
+			if m == "#" then
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "grass.soda")
+			elseif m == "P" then
+				ent_player = player:new((x-1)*80, (y-1)*80)
+			end
+		end
+	end
 end
 
 function love.draw()
@@ -71,40 +100,37 @@ function love.draw()
 	
 	-- Push the game window over, creates black bars if the window isn't the same aspect ratio as what the game's expecting
 	if center_fullscreen_window then
-	lg.setColor(WINDOW_BG)
-	lg.rectangle("fill", 0, 0, screen_width, screen_height)
-	
-	lg.push()
-	lg.translate(window_x_offset, window_y_offset)
+		lg.setColor(WINDOW_BG)
+		lg.rectangle("fill", 0, 0, screen_width, screen_height)
+		
+		lg.push()
+		lg.translate(window_x_offset, window_y_offset)
 	end
 	
 	lg.push()
 	lg.scale(window_scale)
-	love.graphics.setScissor(window_x_offset, window_y_offset, default_width * window_scale, default_height * window_scale)
+	lg.setScissor(window_x_offset, window_y_offset, default_width * window_scale, default_height * window_scale)
 	
 	drawGame()
 	
-	love.graphics.setScissor()
+	lg.setScissor()
 	lg.pop() --screen scaling
 	
 	if center_fullscreen_window then
-	lg.pop() --screen offset
+		lg.pop() --screen offset
 	end
 
 end
 
 function drawGame()
-
-	lg.setColor({1,0,0,1})
-	lg.rectangle("fill", 0, 0, default_width, default_height)
-	
 	lg.push()
+	lg.translate(0, 80)
 	local half_width, half_height = default_width / 2, math.floor(default_height / 2)
 	
 	local rnd = (default_width/(window_scale*default_width))
 	if rnd == 1 then rnd = 0.5 end
-	lg.translate(lume.round(-camera_x + half_width, rnd),lume.round(-camera_y + half_height, rnd))
-	
+	--lg.translate(lume.round(-camera_x + half_width, rnd),lume.round(-camera_y + half_height, rnd))
+
 	-- local px, py = 0, 0
 	
 	-- px = lume.round(player_x, rnd)
@@ -118,29 +144,25 @@ function drawGame()
 	-- end
 	
 	-- polygon.draw(ent_player)
+	for i,v in ipairs(tiles) do
+		v:draw()
+	end
+
+	ent_player:draw()
 
 
 	lg.pop()
 
 	lg.setColor(0.5, 1/32, 75/255)
 	lg.rectangle("fill", 0, 0, 1280, 80)
-	lg.setColor(math.random(),math.random(),math.random(),math.random())
-	for y=1,9 do
-		for x=1,16 do
-			lg.push()
-			lg.translate((x-1)*80, y*80)
-			polygon.draw(grass)
-			lg.pop()
-			--lg.rectangle("line", (x-1)*80, y*80, 80, 80)
-		end
-	end
 	
-	lg.setColor({1,1,1,1})
-	lg.push()
-	lg.scale(1/font_scale)
-	local text_scale = font_scale/1
-	lg.print("buf buf",math.floor(default_width*text_scale) - font:getWidth("buf buf") - 96,math.floor(32*text_scale))
-	lg.pop()
+	-- TODO: simplify text stuff
+	-- lg.setColor({1,1,1,1})
+	-- lg.push()
+	-- lg.scale(1/font_scale)
+	-- local text_scale = font_scale/1
+	-- lg.print("buf buf",math.floor(default_width*text_scale) - font:getWidth("buf buf") - 96,math.floor(32*text_scale))
+	-- lg.pop()
 
 end
 
@@ -162,6 +184,8 @@ function love.update(dt)
 		
 		setDefaultWindow(not isfs)
 	end
+
+	ent_player:update(dt)
 	
 	-- QUIT
 	if escape_key == _PRESS then
@@ -184,6 +208,12 @@ end
 
 function love.resize(w, h)
 	updateWindowScale(w, h)
+end
+
+function love.keypressed(k)
+	if ent_player then
+		ent_player:keypressed(k)
+	end
 end
 
 function hsl(h, s, l, a)

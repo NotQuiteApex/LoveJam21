@@ -1,5 +1,7 @@
 import = require "engine.import"
 
+local lg = love.graphics
+
 local polygon = {}
 
 function polygon.new(fname)
@@ -122,6 +124,7 @@ function polygon.draw(tbl)
 		lg.rectangle("line", 0, 0, tbl.width * tbl.xscale, tbl.height * tbl.yscale)
 	end
 
+	lg.setColor(1,1,1)
 end
 
 function polygon.lengthdir_x(length, dir)
