@@ -34,6 +34,7 @@ function player:init(x, y)
 
 	self.iframes = 0
 	self.iframesactive = false
+	self.iframeseffect = false
 
 	self.type = "player"
 
@@ -197,8 +198,10 @@ function player:update(dt)
 				if v.normalY ~= 0 then self.yv = 0 end
 				self.state = "hurt"
 				self.health = self.health - 1
-				if v.normalX == 0 then
+				if v.normalX == 0 and o.xv then
 					self.hitdirection = o.xv
+				elseif v.normalX == 0 then
+					self.hitdirection = -player_facing
 				else
 					self.hitdirection = v.normalX
 				end
