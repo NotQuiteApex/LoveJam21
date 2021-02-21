@@ -22,6 +22,10 @@ player_v_key = 0
 tung_timer = 0
 tung_timer_max = 30
 
+player_walk_timer = 0
+player_animation_flip = false
+player_walk_timer_max = 10
+
 local earlyjumptimermax = 0.1
 local coyotetimermax = 0.15
 local iframesmax = 0.5
@@ -170,6 +174,19 @@ function player:update(dt)
 	if n_key == _OFF and self.yv < 0 then
 		self.yv = self.yv / 1.075
 	end
+	
+	if a_key == _ON or d_key == _ON then
+	
+		player_walk_timer = math.min(player_walk_timer + 60 * dt, player_walk_timer_max)
+		
+		if player_walk_timer == player_walk_timer_max then
+			player_walk_timer = 0
+			player_animation_flip = not player_animation_flip
+		end
+	
+	end
+	
+	-- Tongue shit
 	
 	player:getTongueAngle()
 	
@@ -435,6 +452,11 @@ end
 
 function player:draw()
 
+	local player_model = mdl_player
+	if player_animation_flip then
+		player_model = mdl_player_walk
+	end
+	
 	lg.setColor(1,0,0,1)
 	lg.circle("fill", tung_por_x, tung_por_y, 10)
 
@@ -463,7 +485,7 @@ function player:draw()
 	end
 	
 	if not self.iframesactive or self.iframeseffect then
-		polygon.draw(mdl_player)
+		polygon.draw(player_model)
 	end
 	lg.pop()
 	

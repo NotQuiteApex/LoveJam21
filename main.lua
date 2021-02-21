@@ -74,7 +74,9 @@ function love.load()
 	bumpwrld = bump.newWorld(80)
 	
 	mdl_player = polygon.new("soda/THEGUY.soda")
+	mdl_player_walk = polygon.new("soda/THEGUYWALKS.soda")
 	mdl_player.bbox_visible = true
+	mdl_player_walk.bbox_visible = true
 	mdl_whip = polygon.new("soda/THEGUYARM.soda")
 	
 	mdl_swiper = polygon.new("soda/swiper.soda")
