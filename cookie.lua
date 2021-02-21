@@ -9,6 +9,9 @@ function cookie:init(x, y)
 	self.x = x
 	self.y = y
 
+	self.xv = 0
+	self.yv = 0
+
 	self.px = x
 	self.py = y
 	self.loader = loader.step
@@ -27,19 +30,29 @@ function cookie:init(x, y)
 end
 
 function cookie:update(dt)
-	self.movetimer = self.movetimer + dt
-	if self.movetimer > movetimermax then
-		self.px = self.x + math.random()*5
-		self.py = self.y + math.random()*5
-		self.movetimer = 0
+
+	if self.state == "normal" then
+		self.movetimer = self.movetimer + dt
+		if self.movetimer > movetimermax then
+			self.px = self.x + math.random()*5
+			self.py = self.y + math.random()*5
+			self.movetimer = 0
+		end
+	elseif self.state == "primed" then
+		self.x = self.x + self.xv * dt
+		self.y = self.y + self.yv * dt
 	end
 
 	-- collision
 	local function filter(i, o)
-		if o.type == "player" then
-			return "cross"
+		if self.state == "normal" then
+			if o.type == "player" then
+				return "cross"
+			end
+			return "slide"
+		else
+			return "touch"
 		end
-		return "slide"
 	end
 
 	-- run collision detection with the filter
@@ -58,6 +71,8 @@ end
 function cookie:damage()
 	if self.state == "normal" then
 		self.state = "primed"
+	else
+		self.state = "explode"
 	end
 end
 

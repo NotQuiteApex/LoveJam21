@@ -7,8 +7,6 @@ loader.spawn_after = 100
 loader.x = 0
 loader.spawn_remainder = 0
 
-local updateables = {"tiles", "goombas", "cookies", "enemy_data"}
-
 function loader.init()
 
 	loader.temp_map = {

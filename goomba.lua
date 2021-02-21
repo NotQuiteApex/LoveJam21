@@ -29,10 +29,10 @@ function goomba:update(dt)
 
 	-- collision
 	local function filter(i, o)
-		if o.type == "player" then
-			return "cross"
+		if o.type == "ground" or o.type == "goomba" then
+			return "slide"
 		end
-		return "slide"
+		return "cross"
 	end
 
 	-- run collision detection with the filter
@@ -76,5 +76,12 @@ end
 
 function goomba:delete()
 	bumpwrld:remove(self)
+	local spawndrop = lume.weightedchoice({
+		[true] = 1,
+		[false] = 0
+	})
+	if spawndrop then
+		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+	end
 	-- spawn gibs?
 end
