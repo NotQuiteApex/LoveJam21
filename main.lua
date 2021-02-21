@@ -83,13 +83,16 @@ function love.load()
 	mdl_ghost = polygon.new("soda/ghost.soda")
 	mdl_cookie = polygon.new("soda/cookie.soda")
 	
+	mdl_tung = polygon.new("soda/tung.soda")
+	mdl_tung2 = polygon.new("soda/tung2.soda")
+	
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24
 
 	map = {
 		"#        I F           I             I F          I             I F            #",
-		"#  WW    I             I             I            I       G     I          WW  #",
-		"#  WW    I             I       WW    I            I             I          WW  #",
+		"#  WW    I ^^^^^^^     I             I            I       G     I          WW  #",
+		"#  WW    I   nnn       I       WW    I            I             I          WW  #",
 		"#        I             I       WW    I   c bb c   I      c c    I              #",
 		"# P      I             I             I ^^^^^^^^   I  ^^^^^^^^   I              #",
 		"####     I      g      I             I^^          I             I              #",
@@ -130,6 +133,17 @@ function love.load()
 				cookies[#cookies+1] = cookie:new((x-1)*80, (y-1)*80)
 			elseif m == "o" then -- g(o)omba
 				goombas[#goombas+1] = goomba:new((x-1)*80, (y-1)*80)
+			elseif m == "n" then -- pea(n)ut butter
+				local choose = math.random(4)
+				local pb_name = "pb.soda"
+				if choose == 2 then
+					pb_name = "pb2.soda"
+				elseif choose == 3 then
+					pb_name = "pb3.soda"
+				elseif choose == 4 then
+					pb_name = "pb4.soda"
+				end
+				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, pb_name, true)
 			end
 		end
 	end

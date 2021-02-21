@@ -17,9 +17,11 @@ ralt_key = _OFF
 enter_key = _OFF
 escape_key = _OFF
 f4_key = _OFF
-
+w_key = _OFF
 a_key = _OFF
+s_key = _OFF
 d_key = _OFF
+comma_key = _OFF
 
 up_key = _OFF
 down_key = _OFF
@@ -68,6 +70,11 @@ function input.update()
 
 	mouse_switch = input.pullSwitch(love.mouse.isDown(1), mouse_switch)
 	
+	comma_key = input.pullSwitch(lk.isDown(","), comma_key)
+	w_key = input.pullSwitch(lk.isDown("w"), w_key)
+	a_key = input.pullSwitch(lk.isDown("a"), a_key)
+	s_key = input.pullSwitch(lk.isDown("s"), s_key)
+	d_key = input.pullSwitch(lk.isDown("d"), d_key)
 	r_key = input.pullSwitch(lk.isDown("r"), r_key)
 	n_key = input.pullSwitch(lk.isDown("n","x"), n_key)
 	m_key = input.pullSwitch(lk.isDown("m","z"), m_key)
@@ -76,9 +83,6 @@ function input.update()
 	enter_key = input.pullSwitch(lk.isDown("return"), enter_key)
 	escape_key = input.pullSwitch(lk.isDown("escape"), escape_key)
 	f4_key = input.pullSwitch(lk.isDown("f4"), f4_key)
-
-	a_key = input.pullSwitch(lk.isDown("a"), a_key)
-	d_key = input.pullSwitch(lk.isDown("a"), a_key)
 	
 	up_key = input.pullSwitch(lk.isDown("up"), up_key)
 	down_key = input.pullSwitch(lk.isDown("down"), down_key)

@@ -12,7 +12,15 @@ whip_hit_buffer = 2
 player_facing = 1
 whip_calc = 0
 whip_angle = 0
+tongue_angle = 0
 
+tung_por_x = 0
+tung_por_y = 0
+player_h_key = 0
+player_v_key = 0
+
+tung_timer = 0
+tung_timer_max = 30
 
 local earlyjumptimermax = 0.1
 local coyotetimermax = 0.15
@@ -162,6 +170,24 @@ function player:update(dt)
 	if n_key == _OFF and self.yv < 0 then
 		self.yv = self.yv / 1.075
 	end
+	
+	player:getTongueAngle()
+	
+	if comma_key == _PRESS and tung_timer == 0 then
+		tung_timer = 1
+	end
+	
+	if tung_timer ~= 0 and tung_timer < tung_timer_max then
+		tung_timer = math.min(tung_timer + 60 * dt, tung_timer_max)
+		local this_tung_angle = math.rad(tongue_angle)
+		print(tongue_angle)
+		tung_por_x = self.x + polygon.lengthdir_x(100, tongue_angle)
+		tung_por_y = self.y + polygon.lengthdir_y(100, tongue_angle)
+	end
+	
+	if tung_timer == tung_timer_max then
+		tung_timer = 0
+	end
 
 	-- gravity!
 	self.yv = self.yv + 30 * dt
@@ -303,9 +329,114 @@ function player:update(dt)
 			end
 		end
 	end
+	
+	--local mx, my = (love.mouse.getX() - window_x_offset + camera_x - default_width/2) / window_scale, (love.mouse.getY() - window_y_offset) / window_scale
+	--tung_por_x = mx
+	--tung_por_y = my
+end
+
+function player:getTongueAngle()
+	
+	if w_key == _PRESS then
+		player_v_key = -1
+	end
+	
+	if w_key == _ON and s_key == _RELEASE then
+		player_v_key = -1
+	end
+	
+	if s_key == _PRESS then
+		player_v_key = 1
+	end
+	
+	if s_key == _ON and w_key == _RELEASE then
+		player_v_key = 1
+	end
+	
+	if w_key == _OFF and s_key == _OFF then
+		player_v_key = 0
+	end
+	
+	if a_key == _PRESS then
+		player_h_key = -1
+	end
+	
+	if a_key == _ON and d_key == _RELEASE then
+		player_h_key = -1
+	end
+	
+	if d_key == _PRESS then
+		player_h_key = 1
+	end
+	
+	if d_key == _ON and a_key == _RELEASE then
+		player_h_key = 1
+	end
+	
+	if a_key == _OFF and d_key == _OFF then
+		player_h_key = 0
+	end
+
+	local p_dir = 0
+	local dir_changed = false
+
+	-- Move up
+	if player_v_key == -1 then
+		p_dir = 90
+		dir_changed = true
+	end
+
+	-- Move down
+	if player_v_key == 1 then
+		p_dir = 270
+		dir_changed = true
+	end
+
+	-- Moving left
+	if player_h_key == -1 then
+
+		if player_v_key ~= 0 then
+
+			if p_dir == 90 then
+				p_dir = 135 -- Move up and left
+			elseif p_dir == 270 then
+				p_dir = 225 -- Move down and left
+			end
+
+		else
+			p_dir = 180 -- Move left
+			dir_changed = true
+		end
+
+	end
+
+	-- Moving right
+	if player_h_key == 1 then
+
+		if player_v_key ~= 0 then
+
+			if p_dir == 90 then
+				p_dir = 45 -- Move up and right
+			elseif p_dir == 270 then
+				p_dir = 315 -- Move down and right
+			end
+
+		else
+			p_dir = 0
+			dir_changed = true
+		end
+
+	end
+
+	if dir_changed then
+		tongue_angle = p_dir
+	end
 end
 
 function player:draw()
+
+	lg.setColor(1,0,0,1)
+	lg.circle("fill", tung_por_x, tung_por_y, 10)
 
 	local x_draw = self.x-6
 	if player_facing == -1 then
@@ -367,7 +498,82 @@ function player:draw()
 		end
 	end
 	
+	-- draw tongue
+	
+	if tung_timer ~= 0 then
+	player:drawTongue(self.x, self.y)
+	end
+	
 end
+
+function player:drawTongue(x, y)
+
+	local tung_ang = lume.angle(x + 32, y + 80, tung_por_x, tung_por_y)
+	
+	local start_x, start_y = x + 42, y + 8
+	if player_facing == -1 then
+		start_x = start_x - 64 + 18
+	end
+	
+	lg.push()
+	lg.translate(start_x, start_y)
+	polygon.draw(mdl_tung2)
+	lg.pop()
+	
+	local i = 1
+	local tung_count = 40
+	while i < tung_count do
+		
+		lg.push()
+		lg.translate(7, 8)
+		
+		local end_x, end_y = tung_por_x, tung_por_y - 60
+		local my_x, my_y
+		my_x = notLerp(start_x, end_x, tung_count)
+		my_x = i * my_x
+		my_y = notLerp(start_y, end_y, tung_count)
+		my_y = i * my_y
+		
+		lg.translate(my_x + start_x, my_y + start_y)
+		
+		local new_ang = notLerp(lume.round(math.deg(tung_ang), 45)+360, math.deg(tung_ang), tung_count) --math.deg(tung_ang)/tung_count
+		--print(math.deg(tung_ang/4))
+		new_ang = i * new_ang
+		
+		lg.rotate(math.rad(new_ang))
+		lg.translate(-7, -8)
+		polygon.draw(mdl_tung2)
+		lg.pop()
+		
+		i = i + 1
+		
+	end
+	
+	lg.push()
+	lg.translate(7, 8)
+	lg.translate(tung_por_x, tung_por_y - 60)
+	
+	lg.rotate(tung_ang)
+	lg.translate(-7, -8)
+	polygon.draw(mdl_tung)
+	lg.pop()
+
+end
+
+--[[
+	I don't know what to call this because its not linear interpolation
+	This function takes a current position 'a'
+	and the ending position 'b'
+	and the animation length 'c'
+	and then returns how much the variable should change each step
+	Ex: start at -100 end at 300 in 4 steps, returns 100
+]]
+function notLerp(a, b, c)
+	local ss = 1
+	if b < a then ss = -1 end
+	return ((math.abs(a - b))*ss)/c
+end
+
 
 function player:jump()
 	self.canjump = false
