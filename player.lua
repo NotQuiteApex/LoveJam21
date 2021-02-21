@@ -459,9 +459,6 @@ function player:draw()
 	if player_animation_flip then
 		player_model = mdl_player_walk
 	end
-	
-	lg.setColor(1,0,0,1)
-	lg.circle("fill", tung_por_x, tung_por_y, 10)
 
 	local x_draw = self.x-6
 	if player_facing == -1 then
@@ -539,11 +536,6 @@ function player:drawTongue(x, y)
 	if player_facing == -1 then
 		start_x = start_x - 64 + 18
 	end
-	
-	lg.push()
-	lg.translate(start_x, start_y)
-	polygon.draw(mdl_tung2)
-	lg.pop()
 	
 	lg.push()
 	lg.translate(7, 8)

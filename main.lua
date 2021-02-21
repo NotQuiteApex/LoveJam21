@@ -86,7 +86,6 @@ function love.load()
 	mdl_cookie = polygon.new("soda/cookie.soda")
 	
 	mdl_tung = polygon.new("soda/tung.soda")
-	mdl_tung2 = polygon.new("soda/tung2.soda")
 	
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24
