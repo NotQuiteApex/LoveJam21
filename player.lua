@@ -22,8 +22,6 @@ player_v_key = 0
 tung_timer = 0
 tung_timer_max = 30
 
-tongue_collider = {}
-
 player_walk_timer = 0
 player_animation_flip = false
 player_walk_timer_max = 10
@@ -60,7 +58,6 @@ function player:init(x, y)
 	self.appliedhurtimpulse = false
 
 	bumpwrld:add(self, x, y, 60, 60)
-	bumpwrld:add(tongue_collider, 0, 0, 3, 4)
 end
 
 function player:update(dt)
@@ -209,10 +206,9 @@ function player:update(dt)
 		end
 		tung_por_x = self.x + polygon.lengthdir_x(1, this_tung_angle) + 42 - x_bonus
 		tung_por_y = self.y + polygon.lengthdir_y(1, this_tung_angle) + 8 + 4
-		local tcx = self.x + polygon.lengthdir_x(tung_timer, this_tung_angle) + 42 - x_bonus
-		local tcy = self.y + polygon.lengthdir_y(tung_timer, this_tung_angle) + 42 - x_bonus
+		local tcx = self.x + polygon.lengthdir_x(tung_timer * 13.1, this_tung_angle) + 42 - x_bonus
+		local tcy = self.y + polygon.lengthdir_y(tung_timer * 13.1, this_tung_angle) + 8 + 4
 		debug_tcx, debug_tcy = tcx, tcy
-		bumpwrld:update(tongue_collider, tung_por_x, tung_por_y)
 	end
 	
 	if tung_timer == tung_timer_max then
