@@ -194,12 +194,16 @@ function player:update(dt)
 		tung_timer = 1
 	end
 	
+	tongue_angle = tongue_angle + 0.01
+	if tongue_angle >= 360 then
+		tongue_angle = 0
+	end
+	
 	if tung_timer ~= 0 and tung_timer < tung_timer_max then
 		tung_timer = math.min(tung_timer + 60 * dt, tung_timer_max)
 		local this_tung_angle = math.rad(tongue_angle)
-		print(tongue_angle)
-		tung_por_x = self.x + polygon.lengthdir_x(100, tongue_angle)
-		tung_por_y = self.y + polygon.lengthdir_y(100, tongue_angle)
+		tung_por_x = self.x + 32 + polygon.lengthdir_x(100, tongue_angle)
+		tung_por_y = self.y + 40 + polygon.lengthdir_y(100, tongue_angle)
 	end
 	
 	if tung_timer == tung_timer_max then
@@ -530,7 +534,8 @@ end
 
 function player:drawTongue(x, y)
 
-	local tung_ang = lume.angle(x + 32, y + 80, tung_por_x, tung_por_y)
+	local tung_ang = math.rad(tongue_angle)--lume.angle(x + 32, y + 80, tung_por_x, tung_por_y)
+	print(math.rad(270))
 	
 	local start_x, start_y = x + 42, y + 8
 	if player_facing == -1 then
@@ -542,6 +547,7 @@ function player:drawTongue(x, y)
 	polygon.draw(mdl_tung2)
 	lg.pop()
 	
+	--[[
 	local i = 1
 	local tung_count = 40
 	while i < tung_count do
@@ -549,7 +555,7 @@ function player:drawTongue(x, y)
 		lg.push()
 		lg.translate(7, 8)
 		
-		local end_x, end_y = tung_por_x, tung_por_y - 60
+		local end_x, end_y = tung_por_x, tung_por_y
 		local my_x, my_y
 		my_x = notLerp(start_x, end_x, tung_count)
 		my_x = i * my_x
@@ -570,11 +576,13 @@ function player:drawTongue(x, y)
 		i = i + 1
 		
 	end
+	--]]
 	
 	lg.push()
 	lg.translate(7, 8)
-	lg.translate(tung_por_x, tung_por_y - 60)
+	lg.translate(tung_por_x, tung_por_y)
 	
+	--print(tung_ang, tongue_angle)
 	lg.rotate(tung_ang)
 	lg.translate(-7, -8)
 	polygon.draw(mdl_tung)
