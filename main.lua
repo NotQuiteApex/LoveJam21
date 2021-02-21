@@ -72,6 +72,7 @@ logo_fade_in = true
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
 	game_paused = true
+	enter_key = _OFF
 end
 
 function love.load()
