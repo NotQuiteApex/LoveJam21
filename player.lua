@@ -195,15 +195,15 @@ function player:update(dt)
 		tung_timer = 1
 	end
 	
-	if tung_timer ~= 0 and tung_timer < tung_timer_max then
+	if tung_timer ~= 0 and tung_timer <= tung_timer_max then
 		tung_timer = math.min(tung_timer + 60 * dt, tung_timer_max)
 		local this_tung_angle = math.rad(tongue_angle)
-		local x_bonus = 0
-		if tung_facing == -1 then
-			x_bonus = 47
+		local x_bonus = -8
+		if player_facing == -1 then
+			x_bonus = 55
 		end
-		tung_por_x = self.x + polygon.lengthdir_x(100, this_tung_angle) + 42 - x_bonus
-		tung_por_y = self.y + polygon.lengthdir_y(100, this_tung_angle) + 8
+		tung_por_x = self.x + polygon.lengthdir_x(1, this_tung_angle) + 42 - x_bonus
+		tung_por_y = self.y + polygon.lengthdir_y(1, this_tung_angle) + 8 + 4
 	end
 	
 	if tung_timer == tung_timer_max then
@@ -378,19 +378,11 @@ function player:getTongueAngle()
 		player_v_key = 0
 	end
 	
-	if a_key == _PRESS then
+	if a_key == _ON and player_facing == -1 then
 		player_h_key = -1
 	end
 	
-	if a_key == _ON and d_key == _RELEASE then
-		player_h_key = -1
-	end
-	
-	if d_key == _PRESS then
-		player_h_key = 1
-	end
-	
-	if d_key == _ON and a_key == _RELEASE then
+	if d_key == _ON and player_facing == 1 then
 		player_h_key = 1
 	end
 	
@@ -539,18 +531,19 @@ function player:drawTongue(x, y)
 
 	local tung_ang = math.rad(tongue_angle)
 	
-	local start_x, start_y = x + 42, y + 8
+	local start_x = -2
 	if player_facing == -1 then
-		start_x = start_x - 64 + 18
+		start_x = 18
 	end
 	
 	lg.push()
-	lg.translate(7, 8)
-	lg.translate(tung_por_x, tung_por_y)
+	lg.translate(0, 8)
+	lg.translate(tung_por_x + start_x, tung_por_y)
 	
 	--print(tung_ang, tongue_angle)
 	lg.rotate(-tung_ang)
-	lg.translate(-7, -8)
+	lg.scale(tung_timer,1)
+	lg.translate(0, -8)
 	polygon.draw(mdl_tung)
 	lg.pop()
 
