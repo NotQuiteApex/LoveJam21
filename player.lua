@@ -12,22 +12,10 @@ whip_hit_buffer = 2
 player_facing = 1
 whip_calc = 0
 whip_angle = 0
-tongue_angle = 0
-
-tung_por_x = 0
-tung_por_y = 0
-player_h_key = 0
-player_v_key = 0
-
-tung_timer = 0
-tung_timer_max = 30
 
 player_walk_timer = 0
 player_animation_flip = false
 player_walk_timer_max = 10
-
-debug_tcx = 0
-debug_tcy = 0
 
 local earlyjumptimermax = 0.1
 local coyotetimermax = 0.15
@@ -198,32 +186,6 @@ function player:update(dt)
 		end
 	
 	end
-	
-	--[[-- Tongue shit
-	
-	player:getTongueAngle()
-	
-	if comma_key == _PRESS and tung_timer == 0 then
-		tung_timer = 1
-	end
-	
-	if tung_timer ~= 0 and tung_timer <= tung_timer_max then
-		tung_timer = math.min(tung_timer + 60 * dt, tung_timer_max)
-		local this_tung_angle = math.rad(tongue_angle)
-		local x_bonus = -8
-		if player_facing == -1 then
-			x_bonus = 55
-		end
-		tung_por_x = self.x + polygon.lengthdir_x(1, this_tung_angle) + 42 - x_bonus
-		tung_por_y = self.y + polygon.lengthdir_y(1, this_tung_angle) + 8 + 4
-		local tcx = self.x + polygon.lengthdir_x(tung_timer * 13.1, this_tung_angle) + 42 - x_bonus
-		local tcy = self.y + polygon.lengthdir_y(tung_timer * 13.1, this_tung_angle) + 8 + 4
-		debug_tcx, debug_tcy = tcx, tcy
-	end
-	
-	if tung_timer == tung_timer_max then
-		tung_timer = 0
-	end--]]
 
 	-- gravity!
 	self.yv = self.yv + 30 * dt
@@ -286,7 +248,9 @@ function player:update(dt)
 			if o.droptype == "health" then
 				o.deleteself = true
 				self.health = self.health + 1
-				-- play health pickup sound?
+				sfx_health_pickup:stop()
+				sfx_health_pickup:play()
+				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
 			end
 		end
 	end
@@ -387,101 +351,6 @@ function player:update(dt)
 		loader.loadTemplate()
 	end
 	
-	--print(loader.spawn_after)
-	
-	--local mx, my = (love.mouse.getX() - window_x_offset + camera_x - default_width/2) / window_scale, (love.mouse.getY() - window_y_offset) / window_scale
-	--tung_por_x = mx
-	--tung_por_y = my
-end
-
-function player:getTongueAngle()
-	
-	if w_key == _PRESS then
-		player_v_key = -1
-	end
-	
-	if w_key == _ON and s_key == _RELEASE then
-		player_v_key = -1
-	end
-	
-	if s_key == _PRESS then
-		player_v_key = 1
-	end
-	
-	if s_key == _ON and w_key == _RELEASE then
-		player_v_key = 1
-	end
-	
-	if w_key == _OFF and s_key == _OFF then
-		player_v_key = 0
-	end
-	
-	if a_key == _ON and player_facing == -1 then
-		player_h_key = -1
-	end
-	
-	if d_key == _ON and player_facing == 1 then
-		player_h_key = 1
-	end
-	
-	if a_key == _OFF and d_key == _OFF then
-		player_h_key = 0
-	end
-
-	local p_dir = 0
-	local dir_changed = false
-
-	-- Move up
-	if player_v_key == -1 then
-		p_dir = 90
-		dir_changed = true
-	end
-
-	-- Move down
-	if player_v_key == 1 then
-		p_dir = 270
-		dir_changed = true
-	end
-
-	-- Moving left
-	if player_h_key == -1 then
-
-		if player_v_key ~= 0 then
-
-			if p_dir == 90 then
-				p_dir = 135 -- Move up and left
-			elseif p_dir == 270 then
-				p_dir = 225 -- Move down and left
-			end
-
-		else
-			p_dir = 180 -- Move left
-			dir_changed = true
-		end
-
-	end
-
-	-- Moving right
-	if player_h_key == 1 then
-
-		if player_v_key ~= 0 then
-
-			if p_dir == 90 then
-				p_dir = 45 -- Move up and right
-			elseif p_dir == 270 then
-				p_dir = 315 -- Move down and right
-			end
-
-		else
-			p_dir = 0
-			dir_changed = true
-		end
-
-	end
-
-	if dir_changed then
-		tongue_angle = p_dir
-	end
 end
 
 function player:draw()
@@ -490,9 +359,6 @@ function player:draw()
 	if player_animation_flip then
 		player_model = mdl_player_walk
 	end
-	
-	lg.setColor(1,0,0,0.3)
-	lg.circle("fill", debug_tcx, debug_tcy, 5)
 
 	local x_draw = self.x-6
 	if player_facing == -1 then
@@ -554,34 +420,6 @@ function player:draw()
 		end
 	end
 	
-	-- draw tongue
-	
-	if tung_timer ~= 0 then
-	player:drawTongue(self.x, self.y)
-	end
-	
-end
-
-function player:drawTongue(x, y)
-
-	local tung_ang = math.rad(tongue_angle)
-	
-	local start_x = -2
-	if player_facing == -1 then
-		start_x = 18
-	end
-	
-	lg.push()
-	lg.translate(0, 8)
-	lg.translate(tung_por_x + start_x, tung_por_y)
-	
-	--print(tung_ang, tongue_angle)
-	lg.rotate(-tung_ang)
-	lg.scale(tung_timer,1)
-	lg.translate(0, -8)
-	polygon.draw(mdl_tung)
-	lg.pop()
-
 end
 
 function player:jump()

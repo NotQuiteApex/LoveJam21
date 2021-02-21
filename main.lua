@@ -14,6 +14,14 @@ require "tile"
 require "player"
 require "pickup"
 
+default_width = 1280
+default_height = 800
+
+MODE_LOGO = 1
+MODE_MENU = 2
+MODE_GAME = 3
+GAME_MODE = MODE_LOGO
+
 lg = love.graphics
 local lk = love.keyboard
 local lm = love.mouse
@@ -55,6 +63,11 @@ font_scale = 2
 
 updateables = {"tiles", "goombas", "cookies", "pickups", "enemy_data"}
 
+logo_opacity = 255
+logo_timer = 0
+logo_count = 0
+logo_fade_in = true
+
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
 end
@@ -89,18 +102,33 @@ function love.load()
 	mdl_goomba = polygon.new("soda/goomba.soda")
 	mdl_ghost = polygon.new("soda/ghost.soda")
 	mdl_cookie = polygon.new("soda/cookie.soda")
+	
+	mdl_illteteka = polygon.new("soda/illteteka.soda")
+	mdl_logo = polygon.new("soda/logo.soda")
+	mdl_titlescreen = polygon.new("soda/titlescreen.soda")
 
 	ui_heart = polygon.new("soda/ui_heart.soda")
 	ui_heartcase = polygon.new("soda/ui_heartcase.soda")
 	
-	mdl_tung = polygon.new("soda/tung.soda")
-	
 	sfx_enemy_pop = la.newSource("sfx/enemy_pop.wav", "static")
 	
+	sfx_health_pickup = la.newSource("sfx/get_heart.wav", "static")
+	sfx_health_pickup:setVolume(0.7)
+	
 	music_loop = la.newSource("music/neatgame.ogg", "stream")
-	music_loop:setLooping(true)
-	music_loop:play()
 	music_loop:setVolume(0.4)
+	music_loop:setLooping(true)
+	music_intro = la.newSource("music/dracula_titlescreen.ogg", "stream")
+	music_intro:setVolume(0.4)
+	music_intro:setLooping(true)
+	
+	if GAME_MODE == MODE_LOGO or GAME_MODE == MODE_MENU then
+		music_intro:play()
+	end
+	
+	if GAME_MODE == MODE_GAME then
+		music_loop:play()
+	end
 	
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24
@@ -127,7 +155,13 @@ function love.draw()
 	lg.scale(window_scale)
 	lg.setScissor(window_x_offset, window_y_offset, default_width * window_scale, default_height * window_scale)
 	
-	drawGame()
+	if GAME_MODE == MODE_LOGO then
+		drawLogo()
+	elseif GAME_MODE == MODE_MENU then
+		drawMenu()
+	elseif GAME_MODE == MODE_GAME then
+		drawGame()
+	end
 	
 	lg.setScissor()
 	lg.pop() --screen scaling
@@ -192,6 +226,47 @@ function drawGame()
 
 end
 
+function drawLogo()
+
+	lg.setColor(c_black)
+	lg.rectangle("fill", 0, 0, default_width, default_height)
+	
+	if logo_count == 0 then
+		lg.setColor({1,1,1,1})
+		lg.push()
+		lg.scale(1/font_scale)
+		local text_scale = font_scale/1
+		local name_scale = 4
+		lg.printf("NotQuiteApex",0,360*text_scale, (default_width*font_scale)/name_scale, "center", 0 , name_scale, name_scale)
+		lg.pop()
+	elseif logo_count == 1 then
+
+		lg.push()
+		lg.translate(348,292)
+		lg.scale(0.3)
+		polygon.draw(mdl_illteteka)
+		lg.pop()
+		
+	end
+	
+	lg.setColor(0,0,0,logo_opacity/255)
+	lg.rectangle("fill", 0, 0, default_width, default_height)
+
+end
+
+function drawMenu()
+
+	polygon.draw(mdl_titlescreen)
+	lg.push()
+	lg.translate(394,31)
+	polygon.draw(mdl_logo)
+	lg.pop()
+	
+	lg.setColor(0,0,0,logo_opacity/255)
+	lg.rectangle("fill", 0, 0, default_width, default_height)
+
+end
+
 function love.update(dt)
 
 	-- Get mouse pos, relative to screen scale
@@ -211,6 +286,23 @@ function love.update(dt)
 		setDefaultWindow(not isfs)
 	end
 
+	if GAME_MODE == MODE_LOGO then
+		updateLogo(dt)
+	elseif GAME_MODE == MODE_MENU then
+		updateMenu(dt)
+	elseif GAME_MODE == MODE_GAME then
+		updateGame(dt)
+	end
+	
+	-- QUIT
+	if escape_key == _PRESS then
+		love.event.quit()
+	end
+
+end
+
+function updateGame(dt)
+
 	for i, v in ipairs(enemy_data) do
 		v:update(dt)
 	end
@@ -226,11 +318,45 @@ function love.update(dt)
 	end
 
 	ent_player:update(dt)
+
+end
+
+function updateLogo(dt)
 	
-	-- QUIT
-	if escape_key == _PRESS then
-		love.event.quit()
+	if logo_fade_in then
+	
+		logo_opacity = math.max(logo_opacity - 4 * 60 * dt, 0)
+		if logo_opacity == 0 then
+			logo_timer = math.min(logo_timer + 60 * dt, 90)
+			if logo_timer == 90 then
+				logo_fade_in = false
+				logo_timer = 0
+			end
+		end
+	
+	else
+	
+		logo_opacity = math.min(logo_opacity + 4 * 60 * dt, 255)
+		if logo_opacity == 255 then
+			logo_timer = math.min(logo_timer + 60 * dt, 30)
+			if logo_timer == 30 then
+				logo_fade_in = true
+				logo_count = logo_count + 1
+				logo_timer = 0
+			end
+		end
+	
 	end
+	
+	if logo_count == 2 then
+		GAME_MODE = MODE_MENU
+	end
+
+end
+
+function updateMenu(dt)
+
+	logo_opacity = math.max(logo_opacity - 4 * 60 * dt, 0)
 
 end
 
