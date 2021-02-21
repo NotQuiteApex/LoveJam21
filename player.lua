@@ -194,11 +194,6 @@ function player:update(dt)
 		tung_timer = 1
 	end
 	
-	tongue_angle = tongue_angle + 0.01
-	if tongue_angle >= 360 then
-		tongue_angle = 0
-	end
-	
 	if tung_timer ~= 0 and tung_timer < tung_timer_max then
 		tung_timer = math.min(tung_timer + 60 * dt, tung_timer_max)
 		local this_tung_angle = math.rad(tongue_angle)
@@ -538,7 +533,7 @@ end
 
 function player:drawTongue(x, y)
 
-	local tung_ang = math.rad(tongue_angle)--lume.angle(x + 32, y + 80, tung_por_x, tung_por_y)
+	local tung_ang = math.rad(tongue_angle)
 	
 	local start_x, start_y = x + 42, y + 8
 	if player_facing == -1 then
@@ -549,37 +544,6 @@ function player:drawTongue(x, y)
 	lg.translate(start_x, start_y)
 	polygon.draw(mdl_tung2)
 	lg.pop()
-	
-	--[[
-	local i = 1
-	local tung_count = 40
-	while i < tung_count do
-		
-		lg.push()
-		lg.translate(7, 8)
-		
-		local end_x, end_y = tung_por_x, tung_por_y
-		local my_x, my_y
-		my_x = notLerp(start_x, end_x, tung_count)
-		my_x = i * my_x
-		my_y = notLerp(start_y, end_y, tung_count)
-		my_y = i * my_y
-		
-		lg.translate(my_x + start_x, my_y + start_y)
-		
-		local new_ang = notLerp(lume.round(math.deg(tung_ang), 45)+360, math.deg(tung_ang), tung_count) --math.deg(tung_ang)/tung_count
-		--print(math.deg(tung_ang/4))
-		new_ang = i * new_ang
-		
-		lg.rotate(math.rad(new_ang))
-		lg.translate(-7, -8)
-		polygon.draw(mdl_tung2)
-		lg.pop()
-		
-		i = i + 1
-		
-	end
-	--]]
 	
 	lg.push()
 	lg.translate(7, 8)
@@ -592,21 +556,6 @@ function player:drawTongue(x, y)
 	lg.pop()
 
 end
-
---[[
-	I don't know what to call this because its not linear interpolation
-	This function takes a current position 'a'
-	and the ending position 'b'
-	and the animation length 'c'
-	and then returns how much the variable should change each step
-	Ex: start at -100 end at 300 in 4 steps, returns 100
-]]
-function notLerp(a, b, c)
-	local ss = 1
-	if b < a then ss = -1 end
-	return ((math.abs(a - b))*ss)/c
-end
-
 
 function player:jump()
 	self.canjump = false
