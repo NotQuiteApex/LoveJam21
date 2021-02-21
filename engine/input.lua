@@ -2,6 +2,10 @@ local lk = love.keyboard
 
 local input = {}
 
+-- used when pausing the game
+input.throw_away = false
+input.throw_away_timer = 0
+
 _OFF = 0
 _ON = 1
 _PRESS = 2
@@ -40,33 +44,46 @@ function input.altCombo(a)
 	return input.combo(lalt_key, a) or input.combo(ralt_key, a)
 end
 
-function input.pullSwitch(a, b)
+function input.pullSwitch(a, b, ignore)
 
 	local output = b
 
-	if a then
-
-		if b == _OFF or b == _RELEASE then
-			output = _PRESS
-		elseif b == _PRESS then
-			output = _ON
-		end
-
+	if input.throw_away and not ignore then
+		output = _OFF
 	else
+	
+		-- Main input code
+		if a then
 
-		if b == _ON or b == _PRESS then
-			output = _RELEASE
-		elseif b == _RELEASE then
-			output = _OFF
+			if b == _OFF or b == _RELEASE then
+				output = _PRESS
+			elseif b == _PRESS then
+				output = _ON
+			end
+
+		else
+
+			if b == _ON or b == _PRESS then
+				output = _RELEASE
+			elseif b == _RELEASE then
+				output = _OFF
+			end
+
 		end
-
+		-- End main input code
+	
 	end
 
 	return output
 
 end
 
-function input.update()
+function input.update(dt)
+
+	input.throw_away_timer = math.max(input.throw_away_timer - 60 * dt, 0)
+	if input.throw_away_timer == 0 then
+		input.throw_away = false
+	end
 
 	mouse_switch = input.pullSwitch(love.mouse.isDown(1), mouse_switch)
 	

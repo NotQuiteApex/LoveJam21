@@ -6,6 +6,7 @@ lume = require "engine.lume"
 class = require "engine.class"
 bump = require "engine.bump"
 loader = require "loader"
+ui = require "ui"
 
 require "goomba"
 require "cookie"
@@ -70,6 +71,7 @@ logo_fade_in = true
 
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
+	game_paused = true
 end
 
 function love.load()
@@ -122,6 +124,8 @@ function love.load()
 	music_intro:setVolume(0.4)
 	music_intro:setLooping(true)
 	
+	ui.init()
+	
 	if GAME_MODE == MODE_LOGO or GAME_MODE == MODE_MENU then
 		music_intro:play()
 	end
@@ -162,6 +166,8 @@ function love.draw()
 	elseif GAME_MODE == MODE_GAME then
 		drawGame()
 	end
+	
+	ui.draw(0)
 	
 	lg.setScissor()
 	lg.pop() --screen scaling
@@ -261,9 +267,6 @@ function drawMenu()
 	lg.translate(394,31)
 	polygon.draw(mdl_logo)
 	lg.pop()
-	
-	lg.setColor(0,0,0,logo_opacity/255)
-	lg.rectangle("fill", 0, 0, default_width, default_height)
 
 end
 
@@ -273,7 +276,7 @@ function love.update(dt)
 	mouse_x, mouse_y = (love.mouse.getX() - window_x_offset) / window_scale, (love.mouse.getY() - window_y_offset) / window_scale
 	
 	-- update keys
-	input.update()
+	input.update(dt)
 	
 	-- Toggle fullscreen with alt + enter or F4
 	if input.altCombo(enter_key) or f4_key == _PRESS then
@@ -286,12 +289,18 @@ function love.update(dt)
 		setDefaultWindow(not isfs)
 	end
 
-	if GAME_MODE == MODE_LOGO then
-		updateLogo(dt)
-	elseif GAME_MODE == MODE_MENU then
-		updateMenu(dt)
-	elseif GAME_MODE == MODE_GAME then
-		updateGame(dt)
+	ui.update(dt)
+	
+	if not game_paused then
+
+		if GAME_MODE == MODE_LOGO then
+			updateLogo(dt)
+		elseif GAME_MODE == MODE_MENU then
+			updateMenu(dt)
+		elseif GAME_MODE == MODE_GAME then
+			updateGame(dt)
+		end
+	
 	end
 	
 	-- QUIT
@@ -381,6 +390,12 @@ function setMask(r, g, b, a)
     shader_mask:send("_g", g)
     shader_mask:send("_b", b)
     shader_mask:send("_a", a)
+end
+
+function love.focus(f)
+	if f == false then
+		game_paused = true
+	end
 end
 
 function print_r ( t )
