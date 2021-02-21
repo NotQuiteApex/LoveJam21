@@ -21,6 +21,7 @@ player_v_key = 0
 
 tung_timer = 0
 tung_timer_max = 30
+tung_facing = 1
 
 player_walk_timer = 0
 player_animation_flip = false
@@ -198,7 +199,7 @@ function player:update(dt)
 		tung_timer = math.min(tung_timer + 60 * dt, tung_timer_max)
 		local this_tung_angle = math.rad(tongue_angle)
 		local x_bonus = 0
-		if player_facing == -1 then
+		if tung_facing == -1 then
 			x_bonus = 47
 		end
 		tung_por_x = self.x + polygon.lengthdir_x(100, this_tung_angle) + 42 - x_bonus
@@ -419,12 +420,15 @@ function player:getTongueAngle()
 
 			if p_dir == 90 then
 				p_dir = 135 -- Move up and left
+				tung_facing = -1
 			elseif p_dir == 270 then
 				p_dir = 225 -- Move down and left
+				tung_facing = -1
 			end
 
 		else
 			p_dir = 180 -- Move left
+			tung_facing = -1
 			dir_changed = true
 		end
 
@@ -437,12 +441,15 @@ function player:getTongueAngle()
 
 			if p_dir == 90 then
 				p_dir = 45 -- Move up and right
+				tung_facing = 1
 			elseif p_dir == 270 then
 				p_dir = 315 -- Move down and right
+				tung_facing = 1
 			end
 
 		else
 			p_dir = 0
+			tung_facing = 1
 			dir_changed = true
 		end
 
