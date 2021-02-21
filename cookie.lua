@@ -38,15 +38,20 @@ function cookie:update(dt)
 			self.movetimer = 0
 		end
 	elseif self.state == "primed" then
-
+		self.x = self.x + self.xv * dt
+		self.y = self.y + self.yv * dt
 	end
 
 	-- collision
 	local function filter(i, o)
-		if o.type == "player" then
-			return "cross"
+		if self.state == "normal" then
+			if o.type == "player" then
+				return "cross"
+			end
+			return "slide"
+		else
+			return "touch"
 		end
-		return "slide"
 	end
 
 	-- run collision detection with the filter
