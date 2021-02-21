@@ -83,5 +83,10 @@ function goomba:delete()
 	if spawndrop then
 		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
 	end
-	-- spawn gibs?
+	-- spawn gibs
+	for i=1,3 do
+		gibs[#gibs+1] = gib:new(self.x+30, self.y,
+			math.pi*math.random(), math.random(-60*6, 60*6),
+			-math.random(500, 1000), math.pi/2*math.random(-60, 60))
+	end
 end

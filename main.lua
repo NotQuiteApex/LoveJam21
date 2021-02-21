@@ -8,6 +8,7 @@ bump = require "engine.bump"
 loader = require "loader"
 ui = require "ui"
 
+require "gib"
 require "goomba"
 require "cookie"
 require "enemy"
@@ -21,7 +22,7 @@ default_height = 800
 MODE_LOGO = 1
 MODE_MENU = 2
 MODE_GAME = 3
-GAME_MODE = MODE_LOGO
+GAME_MODE = MODE_GAME--MODE_LOGO
 
 lg = love.graphics
 local lk = love.keyboard
@@ -62,7 +63,7 @@ f4_key = _OFF
 
 font_scale = 2
 
-updateables = {"tiles", "goombas", "cookies", "pickups", "enemy_data"}
+updateables = {"tiles", "goombas", "cookies", "pickups", "enemy_data", "gibs"}
 
 logo_opacity = 255
 logo_timer = 0
