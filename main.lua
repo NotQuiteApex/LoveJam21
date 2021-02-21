@@ -111,6 +111,7 @@ function love.load()
 	mdl_logo = polygon.new("soda/logo.soda")
 	mdl_titlescreen = polygon.new("soda/titlescreen.soda")
 
+	ui_heart = polygon.new("soda/ui_heart.soda")
 	ui_heartright = polygon.new("soda/ui_heartright.soda")
 	ui_heartleft = polygon.new("soda/ui_heartleft.soda")
 	ui_heartcase = polygon.new("soda/ui_heartcase.soda")
