@@ -8,6 +8,7 @@ bump = require "engine.bump"
 loader = require "loader"
 ui = require "ui"
 
+require "explosion"
 require "gib"
 require "goomba"
 require "cookie"
@@ -63,7 +64,7 @@ f4_key = _OFF
 
 font_scale = 2
 
-updateables = {"tiles", "goombas", "cookies", "pickups", "enemy_data", "gibs"}
+updateables = {"tiles", "goombas", "cookies", "pickups", "enemy_data", "explosions", "gibs"}
 
 logo_opacity = 255
 logo_timer = 0

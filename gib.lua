@@ -30,13 +30,13 @@ function gib:update(dt)
 
 	if self.y > 1300 then
 		self.deleteself = true
-		print("delyeet")
 	end
 end
 
 function gib:draw()
 	lg.push()
 	lg.translate(self.x, self.y)
+	lg.scale(2, 2)
 	lg.rotate(self.r)
 	polygon.draw(gib_spr[self.style])
 	lg.pop()

@@ -4,6 +4,7 @@ cookies = {}
 local model = polygon.new("soda/cookie.soda")
 
 local movetimermax = 1/30
+local primedtimermax = 3
 
 function cookie:init(x, y)
 	self.x = x
@@ -34,23 +35,36 @@ function cookie:update(dt)
 	if self.state == "normal" then
 		self.movetimer = self.movetimer + dt
 		if self.movetimer > movetimermax then
-			self.px = self.x + math.random()*5
-			self.py = self.y + math.random()*5
+			self.px = self.x + math.random()*10
+			self.py = self.y + math.random()*10
 			self.movetimer = 0
 		end
 	elseif self.state == "primed" then
+		self.primedtimer = self.primedtimer + dt
+		if self.primedtimer >= primedtimermax then
+			self.deleteself = true
+		end
+
 		self.x = self.x + self.xv * dt
 		self.y = self.y + self.yv * dt
+
+		self.yv = self.yv + 30*60 * dt
+
+		self.px = self.x
+		self.py = self.y
 	end
 
 	-- collision
 	local function filter(i, o)
+		if o.type == "player" or o.isEnemy then
+			return "cross"
+		end
+	
 		if self.state == "normal" then
-			if o.type == "player" then
-				return "cross"
-			end
 			return "slide"
 		else
+			self.xv = 0
+			self.yv = 0
 			return "touch"
 		end
 	end
@@ -68,15 +82,37 @@ function cookie:draw()
 	lg.pop()
 end
 
-function cookie:damage()
+function cookie:damage(o)
+	local dx = 0
+	if o.player_facing then dx = o.player_facing
+	else dx = lume.sign(self.x - o.x) end
+
 	if self.state == "normal" then
 		self.state = "primed"
+		self.xv = dx * 300
+		self.yv = -200
 	else
-		self.state = "explode"
+		self.xv = dx * 300
+		self.yv = -200
+		self.y = self.y-2
 	end
 end
 
 function cookie:delete()
 	bumpwrld:remove(self)
-	-- spawn gibs?
+	local spawndrop = lume.weightedchoice({
+		[true] = 1,
+		[false] = 0
+	})
+	if spawndrop then
+		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+	end
+	-- spawn gibs
+	for i=1,20 do
+		gibs[#gibs+1] = gib:new(self.x+30, self.y,
+			math.pi*math.random(), math.random(-60*6, 60*6),
+			-math.random(500, 1000), math.pi/2*math.random(-60, 60))
+	end
+	-- spawn explosion
+	explosions[#explosions+1] = explosion:new(self.x, self.y, 360, 750)
 end

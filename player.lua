@@ -9,7 +9,6 @@ whip_max = 9
 whip_freeze = 0
 whip_freeze_max = 18
 whip_hit_buffer = 2
-player_facing = 1
 whip_calc = 0
 whip_angle = 0
 player_health_total = 12
@@ -54,12 +53,15 @@ function player:init(x, y)
 	self.iframes = 0
 	self.iframesactive = false
 	self.iframeseffect = false
+	self.hitdirection = 1
 
 	self.type = "player"
 
 	self.state = "normal" -- normal, hurt, grappled
 
 	self.appliedhurtimpulse = false
+
+	self.player_facing = 1
 
 	bumpwrld:add(self, x, y, 60, 60)
 end
@@ -114,9 +116,9 @@ function player:update(dt)
 	
 	-- if whip_timer == 0 then
 	-- 	if self.xv < 0 then
-	-- 		player_facing = -1
+	-- 		self.player_facing = -1
 	-- 	elseif self.xv > 0 then
-	-- 		player_facing = 1
+	-- 		self.player_facing = 1
 	-- 	end
 	-- end
 
@@ -139,7 +141,7 @@ function player:update(dt)
 
 	if self.state == "normal" then
 		if kl then -- if holding left
-			if whip_timer == 0 then player_facing = -1 end
+			if whip_timer == 0 then self.player_facing = -1 end
 			if self.xv > 0 then -- if going right
 				self.xv = self.xv - dec
 				if self.xv <= 0 then self.xv = -0.5 end
@@ -150,7 +152,7 @@ function player:update(dt)
 		end
 
 		if kr then -- if holding right
-			if whip_timer == 0 then player_facing = 1 end
+			if whip_timer == 0 then self.player_facing = 1 end
 			if self.xv < 0 then -- if moving left
 				self.xv = self.xv + dec
 				if self.xv >= 0 then self.xv = 0.5 end
@@ -238,23 +240,7 @@ function player:update(dt)
 				end
 			end
 		elseif o.isEnemy then
-			if self.state ~= "hurt" and not self.iframesactive then
-				if v.normalX ~= 0 then self.xv = 0 end
-				if v.normalY ~= 0 then self.yv = 0 end
-				self.state = "hurt"
-				self.health = self.health - 1
-				if v.normalX == 0 and o.xv then
-					self.hitdirection = o.xv
-				elseif v.normalX == 0 then
-					self.hitdirection = -player_facing
-				else
-					self.hitdirection = v.normalX
-				end
-				for k = 1, #sfx_hurt do sfx_hurt[k]:stop() end
-				local sfx = math.random(#sfx_hurt)
-				sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
-				sfx_hurt[sfx]:play()
-			end
+			self:damage(v, o)
 		elseif o.type == "pickup" then
 			if o.droptype == "health" then
 				o.deleteself = true
@@ -300,7 +286,7 @@ function player:update(dt)
 			whip_timer = math.min(whip_timer + dt * 30, whip_max)
 
 			-- grab backwhip collisions here
-			if player_facing == -1 then
+			if self.player_facing == -1 then
 				items, len = bumpwrld:queryRect(self.x +38-4, self.y - 42, 58, 58)
 			else
 				items, len = bumpwrld:queryRect(self.x - 38, self.y - 42, 58, 58)
@@ -309,7 +295,7 @@ function player:update(dt)
 			whip_timer = math.min(whip_timer + dt * 60, whip_max)
 
 			-- grab frontwhip collisions here
-			if player_facing == -1 then
+			if self.player_facing == -1 then
 				items, len = bumpwrld:queryRect(self.x +28-48-4, self.y - 42, 58, 58)
 			else
 				items, len = bumpwrld:queryRect(self.x - 28+48, self.y - 42, 58, 58)
@@ -326,7 +312,7 @@ function player:update(dt)
 		whip_freeze = math.min(whip_freeze + 60 * dt, whip_freeze_max)
 
 		-- grab whip arm collisions here
-		if player_facing == -1 then
+		if self.player_facing == -1 then
 			items, len = bumpwrld:queryRect(self.x -200+42, self.y + 16, 200, 16)
 		else
 			items, len = bumpwrld:queryRect(self.x + 12, self.y + 16, 200, 16)
@@ -346,11 +332,8 @@ function player:update(dt)
 		local v
 		for i = 1, len do
 			v = items[i]
-			if v.damage then
-				v:damage()
-				if v.type == "cookie" then
-
-				end
+			if v.damage and v.type ~= "player" then
+				v:damage(self)
 			end
 		end
 	end
@@ -363,13 +346,13 @@ function player:update(dt)
 			
 			local push_frisbee_x = 70
 			
-			if player_facing == -1 then
+			if self.player_facing == -1 then
 				push_frisbee_x = -70 + 10
 			end
 			
 			frisbee_x = self.x - 10 + push_frisbee_x
 			frisbee_y = self.y + 10
-			frisbee_facing = player_facing
+			frisbee_facing = self.player_facing
 			frisbee_active = true
 			frisbee_air = 1
 			frisbee_angle = 0
@@ -441,7 +424,7 @@ function player:draw()
 	end
 
 	local x_draw = self.x-6
-	if player_facing == -1 then
+	if self.player_facing == -1 then
 	lg.push()
 	x_draw = -self.x-58
 	lg.scale(-1,1)
@@ -469,7 +452,7 @@ function player:draw()
 	end
 	lg.pop()
 	
-	if player_facing == -1 then
+	if self.player_facing == -1 then
 	lg.pop()
 	end
 	
@@ -487,20 +470,20 @@ function player:draw()
 	if whip_timer ~= 0 then
 		lg.setColor(1,1,1,1)
 		if whip_freeze ~= 0 then
-			if player_facing == -1 then
+			if self.player_facing == -1 then
 				lg.rectangle("line", self.x -200+42, self.y + 16, 200, 16)
 			else
 				lg.rectangle("line", self.x + 12, self.y + 16, 200, 16)
 			end
 		else
 			if whip_timer < whip_max /2 then
-				if player_facing == -1 then
+				if self.player_facing == -1 then
 					lg.rectangle("line", self.x +38-4, self.y - 42, 58, 58)
 				else
 					lg.rectangle("line", self.x - 38, self.y - 42, 58, 58)
 				end
 			else
-				if player_facing == -1 then
+				if self.player_facing == -1 then
 					lg.rectangle("line", self.x +28-48-4, self.y - 42, 58, 58)
 				else
 					lg.rectangle("line", self.x - 28+48, self.y - 42, 58, 58)
@@ -518,4 +501,26 @@ function player:jump()
 	self.canjump = false
 	self.yv = -20
 	self.coyotetimer = 0
+end
+
+function player:damage(v, o)
+	if self.state ~= "hurt" and not self.iframesactive then
+		self.xv = 0
+		self.yv = 0
+		self.state = "hurt"
+		self.health = self.health - 1
+		if v.normalX == 0 and o and o.xv then
+			self.hitdirection = o.xv
+		elseif v.normalX == 0 then
+			self.hitdirection = -self.player_facing
+		elseif v.normalX then
+			self.hitdirection = v.normalX
+		else
+			self.hitdirection = lume.sign(self.x - v.x)
+		end
+		for k = 1, #sfx_hurt do sfx_hurt[k]:stop() end
+		local sfx = math.random(#sfx_hurt)
+		sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
+		sfx_hurt[sfx]:play()
+	end
 end
