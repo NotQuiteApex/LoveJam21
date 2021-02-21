@@ -38,12 +38,14 @@ local sfx_whip = {}
 for i=1,4 do sfx_hurt[i] = la.newSource("sfx/player_hurt"..i..".wav", "static") end
 for i=1,4 do sfx_whip[i] = la.newSource("sfx/player_whip"..i..".wav", "static") end
 sfx_jump = la.newSource("sfx/player_jump.wav", "static")
+sfx_jump:setVolume(0.25)
 
 function player:init(x, y)
 	self.x, self.y = x, y
 	self.xv, self.yv = 0, 0
 
-	self.health = 11
+	self.health = 12
+	self.score = 0
 
 	self.canjump = false
 	self.earlyjump = false
@@ -360,6 +362,9 @@ function player:update(dt)
 			v = items[i]
 			if v.damage then
 				v:damage()
+				if v.type == "cookie" then
+
+				end
 			end
 		end
 	end

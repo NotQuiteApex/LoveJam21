@@ -9,6 +9,9 @@ function cookie:init(x, y)
 	self.x = x
 	self.y = y
 
+	self.xv = 0
+	self.yv = 0
+
 	self.px = x
 	self.py = y
 
@@ -26,11 +29,16 @@ function cookie:init(x, y)
 end
 
 function cookie:update(dt)
-	self.movetimer = self.movetimer + dt
-	if self.movetimer > movetimermax then
-		self.px = self.x + math.random()*5
-		self.py = self.y + math.random()*5
-		self.movetimer = 0
+
+	if self.state == "normal" then
+		self.movetimer = self.movetimer + dt
+		if self.movetimer > movetimermax then
+			self.px = self.x + math.random()*5
+			self.py = self.y + math.random()*5
+			self.movetimer = 0
+		end
+	elseif self.state == "primed" then
+
 	end
 
 	-- collision
@@ -57,6 +65,8 @@ end
 function cookie:damage()
 	if self.state == "normal" then
 		self.state = "primed"
+	else
+		self.state = "explode"
 	end
 end
 

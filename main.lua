@@ -51,6 +51,9 @@ f4_key = _OFF
 
 font_scale = 2
 
+ui_heart = polygon.new("soda/ui_heart.soda")
+ui_heartcase = polygon.new("soda/ui_heartcase.soda")
+
 local updateables = {"tiles", "goombas", "cookies"}
 
 function setDefaultWindow(fs)
@@ -219,10 +222,23 @@ function drawGame()
 	
 	-- TODO: simplify text stuff
 	lg.setColor({1,1,1,1})
+	for i=1,6 do
+		lg.push()
+		lg.translate(40*i, 20)
+		lg.scale(3, 3)
+		polygon.draw(ui_heart)
+		polygon.draw(ui_heartcase)
+		lg.pop()
+	end
 	lg.push()
 	lg.scale(1/font_scale)
 	local text_scale = font_scale/1
-	lg.print("health: " .. ent_player.health,math.floor(32*text_scale),math.floor(32*text_scale), 0, font_scale)
+	local scoretxt = "score: " .. string.format("%06d", ent_player.score)
+	lg.setColor(0,0,0)
+	lg.print(scoretxt, math.floor(900*text_scale),math.floor(36*text_scale), 0, font_scale)
+	lg.print(scoretxt, math.floor(904*text_scale),math.floor(32*text_scale), 0, font_scale)
+	lg.setColor(1,1,1)
+	lg.print(scoretxt, math.floor(900*text_scale),math.floor(32*text_scale), 0, font_scale)
 	lg.pop()
 
 end
