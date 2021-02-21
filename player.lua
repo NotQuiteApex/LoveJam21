@@ -110,13 +110,13 @@ function player:update(dt)
 	--if lk.isDown("a") then self.xv = self.xv - 20*dt end
 	--if lk.isDown("d") then self.xv = self.xv + 20*dt end
 	
-	if whip_timer == 0 then
-		if self.xv < 0 then
-			player_facing = -1
-		elseif self.xv > 0 then
-			player_facing = 1
-		end
-	end
+	-- if whip_timer == 0 then
+	-- 	if self.xv < 0 then
+	-- 		player_facing = -1
+	-- 	elseif self.xv > 0 then
+	-- 		player_facing = 1
+	-- 	end
+	-- end
 
 	-- ##################
 	-- Movement handling
@@ -137,6 +137,7 @@ function player:update(dt)
 
 	if self.state == "normal" then
 		if kl then -- if holding left
+			if whip_timer == 0 then player_facing = -1 end
 			if self.xv > 0 then -- if going right
 				self.xv = self.xv - dec
 				if self.xv <= 0 then self.xv = -0.5 end
@@ -147,6 +148,7 @@ function player:update(dt)
 		end
 
 		if kr then -- if holding right
+			if whip_timer == 0 then player_facing = 1 end
 			if self.xv < 0 then -- if moving left
 				self.xv = self.xv + dec
 				if self.xv >= 0 then self.xv = 0.5 end
@@ -194,7 +196,7 @@ function player:update(dt)
 	
 	end
 	
-	-- Tongue shit
+	--[[-- Tongue shit
 	
 	player:getTongueAngle()
 	
@@ -218,7 +220,7 @@ function player:update(dt)
 	
 	if tung_timer == tung_timer_max then
 		tung_timer = 0
-	end
+	end--]]
 
 	-- gravity!
 	self.yv = self.yv + 30 * dt
@@ -229,7 +231,7 @@ function player:update(dt)
 	-- ##################
 	-- collision filter, for determining how things should react on contact
 	local function filter(i, o)
-		if o.isEnemy then
+		if o.isEnemy or o.type == "pickup" then
 			return "cross"
 		end
 		return "slide"
@@ -277,6 +279,12 @@ function player:update(dt)
 				sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
 				sfx_hurt[sfx]:play()
 			end
+		elseif o.type == "pickup" then
+			if o.droptype == "health" then
+				o.deleteself = true
+				self.health = self.health + 1
+				-- play health pickup sound?
+			end
 		end
 	end
 
@@ -306,7 +314,7 @@ function player:update(dt)
 	-- collision items and filter
 	local len, items = 0
 	local function filter(i)
-		return not (i.type == "ground" or i.type == "player")
+		return i.isEnemy == true
 	end
 	
 	if whip_timer ~= 0 then
