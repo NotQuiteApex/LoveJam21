@@ -109,6 +109,69 @@ function ui.drawMenu(cursor, menu, text_scale, opacity, scale_menu)
 
 end
 
+function ui.drawHealth()
+
+	-- Draw health
+	lg.push()
+	lg.translate(24, 35)
+	lg.scale(2,2)
+
+	local i = 1
+	local xx, yy = 0, 0
+	while i <= math.ceil(player_health_total/2) do
+		xx = xx + 1
+		
+		lg.push()
+		lg.translate(xx * 14, yy * 16)
+		polygon.draw(ui_heartcase)
+		lg.pop()
+		
+		i = i + 1
+	end
+	
+	local i = 1
+	local u = 0
+	local xx, yy = 1, 0
+	while i <= player_health_total do
+		u = u + 1
+		if u == 3 then
+		
+			xx = xx + 1
+		
+			u = 1
+		end
+		
+		local heart_draw = ui_heartright
+		if u == 1 then
+			heart_draw = ui_heartleft
+		end
+		
+		if i > ent_player.health then
+		
+			lg.push()
+			lg.translate(xx * 14, yy * 16)
+			setMask(0, 0, 0, 1)
+			lg.setShader(shader_mask)
+			polygon.draw(heart_draw)
+			lg.setShader()
+			lg.pop()
+		
+		else
+			
+			lg.push()
+			lg.translate(xx * 14, yy * 16)
+			polygon.draw(heart_draw)
+			lg.pop()
+		
+		end
+		
+		i = i + 1
+	end
+	
+	lg.pop()
+
+end
+
 function ui.update(dt)
 
 	-- Detect if window moved and pause game

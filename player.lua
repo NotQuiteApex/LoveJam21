@@ -12,6 +12,7 @@ whip_hit_buffer = 2
 player_facing = 1
 whip_calc = 0
 whip_angle = 0
+player_health_total = 12
 
 frisbee_equipped = true
 frisbee_x = 0
@@ -257,7 +258,7 @@ function player:update(dt)
 		elseif o.type == "pickup" then
 			if o.droptype == "health" then
 				o.deleteself = true
-				self.health = self.health + 1
+				self.health = math.min(self.health + 1, player_health_total)
 				sfx_health_pickup:stop()
 				sfx_health_pickup:play()
 				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
