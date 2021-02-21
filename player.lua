@@ -13,6 +13,16 @@ player_facing = 1
 whip_calc = 0
 whip_angle = 0
 
+frisbee_equipped = true
+frisbee_x = 0
+frisbee_y = 0
+frisbee_facing = 1
+frisbee_active = false
+frisbee_air = 0
+frisbee_air_kick = 14
+frisbee_angle = 0
+frisbee_theta = 1
+
 player_walk_timer = 0
 player_animation_flip = false
 player_walk_timer_max = 10
@@ -344,6 +354,75 @@ function player:update(dt)
 		end
 	end
 	
+	-- Frisbee
+	if frisbee_equipped then
+	
+		if comma_key == _PRESS then
+			frisbee_equipped = false
+			
+			local push_frisbee_x = 70
+			
+			if player_facing == -1 then
+				push_frisbee_x = -70 + 10
+			end
+			
+			frisbee_x = self.x - 10 + push_frisbee_x
+			frisbee_y = self.y + 10
+			frisbee_facing = player_facing
+			frisbee_active = true
+			frisbee_air = 1
+			frisbee_angle = 0
+		end
+	
+	end
+	
+	if frisbee_active then
+	
+		
+		if frisbee_air <= frisbee_air_kick then
+			frisbee_air = math.min(frisbee_air + dt * 60, frisbee_air_kick)
+		end
+		
+		if frisbee_theta == 1 then
+			frisbee_angle = math.min(frisbee_angle + 60 * 3 * dt, 39)
+			if frisbee_angle == 39 then
+				frisbee_theta = -1
+			end
+		elseif frisbee_theta == -1 then
+			frisbee_angle = math.max(frisbee_angle - 60 * dt, 0)
+		end
+			
+		local fris_spd = 11
+			
+		if frisbee_angle == 0 then
+			frisbee_y = frisbee_y + 0.1 * 60 * dt
+			
+			if frisbee_x - 20 > self.x + default_width/2 then
+				frisbee_facing = -1
+			elseif frisbee_x + 100 < self.x - default_width/2 then
+				frisbee_facing = 1
+			end
+			
+			fris_spd = 13
+			
+		end
+		
+		local actual_spd = (frisbee_air/frisbee_air_kick) * fris_spd
+		frisbee_x = frisbee_x + polygon.lengthdir_x(fris_spd * frisbee_facing, math.rad(frisbee_angle))
+		frisbee_y = frisbee_y + polygon.lengthdir_y(fris_spd, math.rad(frisbee_angle))
+		
+		local dist = lume.distance(self.x, self.y, frisbee_x, frisbee_y)
+		if frisbee_angle == 0 and dist < 60 then
+			frisbee_active = false
+			frisbee_air = 0
+			frisbee_angle = 0
+			frisbee_theta = 1
+			frisbee_equipped = true
+		end
+	
+	end
+	
+	-- This moves the endless level
 	local x_change = self.x - ox
 	loader.spawn_after = loader.spawn_after - x_change
 	
@@ -390,6 +469,15 @@ function player:draw()
 	lg.pop()
 	
 	if player_facing == -1 then
+	lg.pop()
+	end
+	
+	if frisbee_active then
+	lg.push()
+	
+		lg.translate(frisbee_x, frisbee_y)
+		polygon.draw(mdl_frisbee)
+	
 	lg.pop()
 	end
 	

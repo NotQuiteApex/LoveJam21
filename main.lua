@@ -99,6 +99,7 @@ function love.load()
 	mdl_player.bbox_visible = true
 	mdl_player_walk.bbox_visible = true
 	mdl_whip = polygon.new("soda/THEGUYARM.soda")
+	mdl_frisbee = polygon.new("soda/frisbee.soda")
 	
 	mdl_swiper = polygon.new("soda/swiper.soda")
 	mdl_strawberry = polygon.new("soda/strawberry.soda")
@@ -133,6 +134,7 @@ function love.load()
 	
 	if GAME_MODE == MODE_GAME then
 		music_loop:play()
+		logo_opacity = 0
 	end
 	
 	camera_x = 0--player_x + 24
