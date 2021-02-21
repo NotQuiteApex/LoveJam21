@@ -67,6 +67,9 @@ function goomba:draw()
 end
 
 function goomba:damage()
+	sfx_enemy_pop:stop()
+	sfx_enemy_pop:setPitch(0.9 + math.random(4)/10)
+	sfx_enemy_pop:play()
 	self.deleteself = true
 end
 

@@ -16,6 +16,7 @@ lg = love.graphics
 local lk = love.keyboard
 local lm = love.mouse
 local lw = love.window
+la = love.audio
 
 -- deleting these breaks polygon.lua
 c_white = {1,1,1,1}
@@ -86,6 +87,13 @@ function love.load()
 	mdl_cookie = polygon.new("soda/cookie.soda")
 	
 	mdl_tung = polygon.new("soda/tung.soda")
+	
+	sfx_enemy_pop = la.newSource("sfx/enemy_pop.wav", "static")
+	
+	music_loop = la.newSource("music/neatgame.ogg", "stream")
+	music_loop:setLooping(true)
+	music_loop:play()
+	music_loop:setVolume(0.4)
 	
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24

@@ -34,7 +34,10 @@ local coyotetimermax = 0.15
 local iframesmax = 0.5
 
 local sfx_hurt = {}
-for i=1,3 do sfx_hurt[i] = la.newSource("sfx/player_hurt"..i..".wav", "static") end
+local sfx_whip = {}
+for i=1,4 do sfx_hurt[i] = la.newSource("sfx/player_hurt"..i..".wav", "static") end
+for i=1,4 do sfx_whip[i] = la.newSource("sfx/player_whip"..i..".wav", "static") end
+sfx_jump = la.newSource("sfx/player_jump.wav", "static")
 
 function player:init(x, y)
 	self.x, self.y = x, y
@@ -267,6 +270,7 @@ function player:update(dt)
 				else
 					self.hitdirection = v.normalX
 				end
+				for k = 1, #sfx_hurt do sfx_hurt[k]:stop() end
 				local sfx = math.random(#sfx_hurt)
 				sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
 				sfx_hurt[sfx]:play()
@@ -291,6 +295,10 @@ function player:update(dt)
 	-- whip attack
 	if m_key == _PRESS and whip_timer == 0 then
 		whip_timer = 1
+		for k = 1, #sfx_whip do sfx_whip[k]:stop() end
+		local sfx = math.random(#sfx_whip)
+		sfx_whip[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
+		sfx_whip[sfx]:play()
 	end
 
 	-- collision items and filter
@@ -552,6 +560,9 @@ function player:drawTongue(x, y)
 end
 
 function player:jump()
+	sfx_jump:stop()
+	sfx_jump:setPitch(1.4 + math.random(10)/10)
+	sfx_jump:play()
 	self.canjump = false
 	self.yv = -20
 	self.coyotetimer = 0
