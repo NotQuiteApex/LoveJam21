@@ -68,6 +68,8 @@ function love.load()
 	local res_w, res_h = lw.getDesktopDimensions( flags.display )
 	font_scale = math.ceil(math.min((res_w/default_width), (res_h/default_height)))
 	
+	shader_mask = lg.newShader("shaders/mask.frag")
+	
 	math.randomseed(os.time())
 	window_scale = math.floor(screen_width/default_width)
 	
@@ -320,6 +322,13 @@ function hsl(h, s, l, a)
 	table.insert(tbl, (b+m))
 	table.insert(tbl, a)
 	return tbl
+end
+
+function setMask(r, g, b, a)
+    shader_mask:send("_r", r)
+    shader_mask:send("_g", g)
+    shader_mask:send("_b", b)
+    shader_mask:send("_a", a)
 end
 
 function print_r ( t )
