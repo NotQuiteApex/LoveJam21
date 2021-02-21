@@ -11,6 +11,7 @@ function cookie:init(x, y)
 
 	self.px = x
 	self.py = y
+	self.loader = loader.step
 
 	self.isEnemy = true
 	self.type = "cookie"

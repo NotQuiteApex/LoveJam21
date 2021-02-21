@@ -5,6 +5,7 @@ input = require "engine.input"
 lume = require "engine.lume"
 class = require "engine.class"
 bump = require "engine.bump"
+loader = require "loader"
 
 require "goomba"
 require "cookie"
@@ -51,7 +52,7 @@ f4_key = _OFF
 
 font_scale = 2
 
-local updateables = {"tiles", "goombas", "cookies"}
+local updateables = {"tiles", "goombas", "cookies", "enemy_data"}
 
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
@@ -100,64 +101,7 @@ function love.load()
 	camera_x = 0--player_x + 24
 	camera_y = 0--player_y + 24
 
-	map = {
-		"#        I F           I             I F          I             I F            #",
-		"#  WW    I ^^^^^^^     I             I            I       G     I          WW  #",
-		"#  WW    I   nnn       I       WW    I            I             I          WW  #",
-		"#        I             I       WW    I   c bb c   I      c c    I              #",
-		"# P      I             I             I ^^^^^^^^   I  ^^^^^^^^   I              #",
-		"####     I      g      I             I^^          I             I              #",
-		"# T      I             I    ^^     ^^^^      s    I     T   s   I        T     #",
-		"#        I   ^^     oo I  ^^^^^      I           oI             I   oo         #",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
-	}
-
-	local m
-	for y=1,9 do
-		for x=1,80 do
-			m = map[y]:sub(x,x)
-			if m == "#" then -- brick wall
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "brick.soda", true)
-			elseif m == "P" then -- player
-				ent_player = player:new((x-1)*80, (y-1)*80)
-			elseif m == "$" then -- floor
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "brick2.soda", true)
-			elseif m == "^" then -- spikes
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "brick3.soda", true)
-			elseif m == "W" then -- (W)indow
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "window.soda", false)
-			elseif m == "T" then -- (T)ree
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "itsatree.soda", false)
-			elseif m == "I" then -- P(I)llar
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "pillar.soda", false)
-			elseif m == "G" then -- pillar (G)uy
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "pillarguy.soda", false)
-			elseif m == "F" then -- (F)lag
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, "flag.soda", false)
-			elseif m == "s" then -- (s)wiper
-				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "swiper.soda", ENEMY_SWIPER)
-			elseif m == "b" then -- straw(b)erry
-				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "strawberry.soda", ENEMY_STRAWBERRY)
-			elseif m == "g" then -- (g)host
-				enemy_data[#enemy_data+1] = enemy:new((x-1)*80, (y-1)*80, "ghost.soda", ENEMY_GHOST)
-			elseif m == "c" then -- (c)ookie
-				cookies[#cookies+1] = cookie:new((x-1)*80, (y-1)*80)
-			elseif m == "o" then -- g(o)omba
-				goombas[#goombas+1] = goomba:new((x-1)*80, (y-1)*80)
-			elseif m == "n" then -- pea(n)ut butter
-				local choose = math.random(4)
-				local pb_name = "pb.soda"
-				if choose == 2 then
-					pb_name = "pb2.soda"
-				elseif choose == 3 then
-					pb_name = "pb3.soda"
-				elseif choose == 4 then
-					pb_name = "pb4.soda"
-				end
-				tiles[#tiles+1] = tile:new((x-1)*80, (y-1)*80, pb_name, true)
-			end
-		end
-	end
+	loader.init()
 	
 	--print_r(tiles)
 end

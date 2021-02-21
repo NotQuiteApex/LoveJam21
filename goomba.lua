@@ -9,6 +9,7 @@ function goomba:init(x, y)
 
 	self.yv = 0
 	self.xv = -1
+	self.loader = loader.step
 
 	self.isEnemy = true
 	self.type = "goomba"

@@ -64,6 +64,9 @@ function player:init(x, y)
 end
 
 function player:update(dt)
+
+	local ox = self.x
+
 	-- Buffer jump input
 	if self.earlyjump then
 		self.earlyjumptimer = self.earlyjumptimer + dt
@@ -363,6 +366,15 @@ function player:update(dt)
 			end
 		end
 	end
+	
+	local x_change = self.x - ox
+	loader.spawn_after = loader.spawn_after - x_change
+	
+	if loader.spawn_after <= 0 then
+		loader.loadTemplate()
+	end
+	
+	--print(loader.spawn_after)
 	
 	--local mx, my = (love.mouse.getX() - window_x_offset + camera_x - default_width/2) / window_scale, (love.mouse.getY() - window_y_offset) / window_scale
 	--tung_por_x = mx

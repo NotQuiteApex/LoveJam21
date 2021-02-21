@@ -12,6 +12,8 @@ function tile:init(x, y, style, solid)
 	if not tilecache[style] then
 		tilecache[style] = polygon.new("soda/"..style)
 	end
+	self.loader = loader.step
+	self.deleteself = false
 
 	if solid then
 	self.type = "ground"
@@ -33,4 +35,11 @@ function tile:draw()
 	lg.translate(self.x, self.y)
 	polygon.draw(tilecache[self.style])
 	lg.pop()
+end
+
+function tile:delete()
+	if self.type == "ground" then
+	bumpwrld:remove(self)
+	end
+	-- spawn gibs?
 end
