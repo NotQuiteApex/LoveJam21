@@ -10,6 +10,8 @@ function strawberry:init(x, y)
 	self.y = y
 
 	self.isEnemy = true
+	
+	self.loader = loader.step
 
 	self.timeroffset = math.random()*math.pi
 
@@ -43,7 +45,7 @@ end
 
 function strawberry:delete()
 	bumpwrld:remove(self)
-	
+
 	local spawndrop = lume.weightedchoice({
 		[true] = 1,
 		[false] = 4

@@ -6,6 +6,8 @@ function pickup:init(x, y)
 	self.y = y
 
 	self.type = "pickup"
+	
+	self.loader = loader.step
 
 	local droptype = lume.weightedchoice({
 		["health"] = 1,
