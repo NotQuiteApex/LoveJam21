@@ -28,7 +28,7 @@ default_height = 800
 MODE_LOGO = 1
 MODE_MENU = 2
 MODE_GAME = 3
-GAME_MODE = MODE_GAME
+GAME_MODE = MODE_LOGO
 
 SKIP_INTRO = false
 
@@ -134,8 +134,8 @@ function love.load()
 	mdl_ghost = polygon.new("soda/ghost.soda")
 	mdl_cookie = polygon.new("soda/cookie.soda")
 	
-	mdl_percy = polygon.new("soda/percy.soda")
-	mdl_apex = polygon.new("soda/apex.soda")
+	mdl_percy = polygon.new("soda/Percy.soda")
+	mdl_apex = polygon.new("soda/Apex.soda")
 	mdl_illteteka = polygon.new("soda/illteteka.soda")
 	mdl_logo = polygon.new("soda/logo.soda")
 	mdl_titlescreen = polygon.new("soda/titlescreen.soda")

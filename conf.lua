@@ -3,7 +3,7 @@ default_height = 800
 
 function love.conf(t)
 	t.identity = ".achocolypse"
-	t.appendidentity = false
+	t.appendidentity = true
 	t.version = "11.3"
 	t.console = false
 	t.accelerometerjoystick = true
