@@ -426,10 +426,10 @@ function updateGame(dt)
 		game_opacity = math.max(game_opacity - 4 * 60 * dt, 0)
 	end
 	
-	if SKIP_INTRO == false or intro_timer < 9.5 * 60 then
+	if SKIP_INTRO == false or intro_timer < 8 * 60 then
 		camera_x = ent_player.x
 		if game_opacity == 0 then
-			intro_timer = math.min(intro_timer + 60 * dt, 9.5 * 60)
+			intro_timer = math.min(intro_timer + 60 * dt, 8 * 60)
 			if snd_intro:isPlaying() == false then
 				music_loop:stop()
 				snd_intro:stop()
@@ -454,11 +454,11 @@ function updateGame(dt)
 			
 		end
 		
-		if intro_timer == 9.5 * 60 or SKIP_INTRO then
+		if intro_timer == 8 * 60 or SKIP_INTRO then
 			snd_intro:stop()
 			music_loop:play()
 			SKIP_INTRO = true
-			intro_timer = 9.5 * 60
+			intro_timer = 8 * 60
 		end
 	
 	else
