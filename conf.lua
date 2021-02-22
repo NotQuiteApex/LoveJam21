@@ -13,14 +13,14 @@ function love.conf(t)
 	t.audio.mic = false
 	t.audio.mixwithsystem = true
 
-	t.window.title = "The Achocolypse"
+	t.window.title = "Werewolf: The Achocolypse"
 	t.window.icon = nil
 	t.window.width = default_width
 	t.window.height = default_height
 	t.window.borderless = false
 	t.window.resizable = true
-	t.window.minwidth = 1
-	t.window.minheight = 1
+	t.window.minwidth = default_width/4
+	t.window.minheight = default_height/4
 	t.window.fullscreen = false
 	t.window.fullscreentype = "desktop"
 	t.window.vsync = 1
@@ -43,7 +43,7 @@ function love.conf(t)
 	t.modules.keyboard = true
 	t.modules.math = true
 	t.modules.mouse = true
-	t.modules.physics = true
+	t.modules.physics = false
 	t.modules.sound = true
 	t.modules.system = true
 	t.modules.thread = true

@@ -125,7 +125,7 @@ function loader.load()
 			elseif m == "s" then -- (s)wiper
 				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
 			elseif m == "b" then -- straw(b)erry
-				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "strawberry.soda", ENEMY_STRAWBERRY)
+				strawberrys[#strawberrys+1] = strawberry:new(map_spawn_x, map_spawn_y)
 			elseif m == "g" then -- (g)host
 				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "ghost.soda", ENEMY_GHOST)
 			elseif m == "c" then -- (c)ookie

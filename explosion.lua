@@ -18,7 +18,7 @@ function explosion:update(dt)
 	for i,v in ipairs(items) do
 		v:damage(self)
 	end
-	
+
 	self.radius = self.radius + self.radiusvel * dt
 	if self.radius >= self.maxradius then
 		self.deleteself = true
@@ -27,7 +27,7 @@ function explosion:update(dt)
 end
 
 function explosion:draw()
-	lg.setColor(1, math.random()*0.25+0.25, 0, 1)
+	lg.setColor(1, math.random()*0.75, 0, 1)
 	lg.rectangle("fill", self.x-self.radius/2, self.y-self.radius/2, self.radius, self.radius)
 	lg.setColor(1,1,1)
 end
