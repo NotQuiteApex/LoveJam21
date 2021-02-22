@@ -7,6 +7,8 @@ function pickup:init(x, y)
 
 	self.type = "pickup"
 
+	self.loader = loader.step
+
 	local droptype = lume.weightedchoice({
 		["health"] = 1,
 		["weapon"] = 4,
@@ -27,7 +29,7 @@ function pickup:init(x, y)
 end
 
 function pickup:update(dt)
-	self.y = self.y + 60 * dt
+	self.y = self.y + 3 * 60 * dt
 
 	local function filter(i, o)
 		if o.type == "ground" then return "touch" end
@@ -54,4 +56,5 @@ end
 
 function pickup:delete()
 	bumpwrld:remove(self)
+	ent_player.score = ent_player.score + 20
 end

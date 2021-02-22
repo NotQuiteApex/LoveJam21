@@ -55,6 +55,9 @@ function player:init(x, y)
 	self.iframeseffect = false
 	self.hitdirection = 1
 
+	self.subweapon = "none" -- frisbee, cannon, steamypb
+	self.subequipped = false
+
 	self.type = "player"
 
 	self.state = "normal" -- normal, hurt, grappled
@@ -248,6 +251,8 @@ function player:update(dt)
 				sfx_health_pickup:stop()
 				sfx_health_pickup:play()
 				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
+			elseif o.droptype == "weapon" then
+				self.subweapon = o.weptype
 			end
 		end
 	end
@@ -312,10 +317,12 @@ function player:update(dt)
 		whip_freeze = math.min(whip_freeze + 60 * dt, whip_freeze_max)
 
 		-- grab whip arm collisions here
-		if self.player_facing == -1 then
-			items, len = bumpwrld:queryRect(self.x -200+42, self.y + 16, 200, 16)
-		else
-			items, len = bumpwrld:queryRect(self.x + 12, self.y + 16, 200, 16)
+		if whip_freeze < whip_freeze_max/2 then
+			if self.player_facing == -1 then
+				items, len = bumpwrld:queryRect(self.x -200+42, self.y + 16, 200, 16)
+			else
+				items, len = bumpwrld:queryRect(self.x + 12, self.y + 16, 200, 16)
+			end
 		end
 	end
 	
@@ -361,8 +368,6 @@ function player:update(dt)
 	end
 	
 	if frisbee_active then
-	
-		
 		if frisbee_air <= frisbee_air_kick then
 			frisbee_air = math.min(frisbee_air + dt * 60, frisbee_air_kick)
 		end
@@ -392,8 +397,8 @@ function player:update(dt)
 		end
 		
 		local actual_spd = (frisbee_air/frisbee_air_kick) * fris_spd
-		frisbee_x = frisbee_x + polygon.lengthdir_x(fris_spd * frisbee_facing, math.rad(frisbee_angle))
-		frisbee_y = frisbee_y + polygon.lengthdir_y(fris_spd, math.rad(frisbee_angle))
+		frisbee_x = frisbee_x + polygon.lengthdir_x(fris_spd * frisbee_facing, math.rad(frisbee_angle)) * dt * 60
+		frisbee_y = frisbee_y + polygon.lengthdir_y(fris_spd, math.rad(frisbee_angle)) * 60 * dt + (frisbee_angle==0 and 60*dt or 0)
 		
 		local dist = lume.distance(self.x, self.y, frisbee_x, frisbee_y)
 		if frisbee_angle == 0 and dist < 60 then
@@ -403,8 +408,24 @@ function player:update(dt)
 			frisbee_theta = 1
 			frisbee_equipped = true
 		end
+
+		if frisbee_y > 800 then
+			frisbee_active = false
+			frisbee_air = 0
+			frisbee_angle = 0
+			frisbee_theta = 1
+			frisbee_equipped = true
+		end
 	
+		local function filter(i) return i.isEnemy == true end
+		local items, len = bumpwrld:queryRect(frisbee_x, frisbee_y, 80, 26, filter)
+		for i, v in ipairs(items) do
+			if v.damage and v.type ~= "player" then
+				v:damage(self)
+			end
+		end
 	end
+
 	
 	-- This moves the endless level
 	local x_change = self.x - ox
@@ -463,38 +484,43 @@ function player:draw()
 		polygon.draw(mdl_frisbee)
 	
 	lg.pop()
+	--lg.rectangle("line",frisbee_x, frisbee_y, 80, 26)
 	end
 	
 	
 	--arm hit box
-	if whip_timer ~= 0 then
-		lg.setColor(1,1,1,1)
-		if whip_freeze ~= 0 then
-			if self.player_facing == -1 then
-				lg.rectangle("line", self.x -200+42, self.y + 16, 200, 16)
-			else
-				lg.rectangle("line", self.x + 12, self.y + 16, 200, 16)
-			end
-		else
-			if whip_timer < whip_max /2 then
-				if self.player_facing == -1 then
-					lg.rectangle("line", self.x +38-4, self.y - 42, 58, 58)
-				else
-					lg.rectangle("line", self.x - 38, self.y - 42, 58, 58)
-				end
-			else
-				if self.player_facing == -1 then
-					lg.rectangle("line", self.x +28-48-4, self.y - 42, 58, 58)
-				else
-					lg.rectangle("line", self.x - 28+48, self.y - 42, 58, 58)
-				end
-			end
-		end
-	end
+	-- if whip_timer ~= 0 then
+	-- 	lg.setColor(1,1,1,1)
+	-- 	if whip_freeze ~= 0 then
+	-- 		if self.player_facing == -1 then
+	-- 			lg.rectangle("line", self.x -200+42, self.y + 16, 200, 16)
+	-- 		else
+	-- 			lg.rectangle("line", self.x + 12, self.y + 16, 200, 16)
+	-- 		end
+	-- 	else
+	-- 		if whip_timer < whip_max /2 then
+	-- 			if self.player_facing == -1 then
+	-- 				lg.rectangle("line", self.x +38-4, self.y - 42, 58, 58)
+	-- 			else
+	-- 				lg.rectangle("line", self.x - 38, self.y - 42, 58, 58)
+	-- 			end
+	-- 		else
+	-- 			if self.player_facing == -1 then
+	-- 				lg.rectangle("line", self.x +28-48-4, self.y - 42, 58, 58)
+	-- 			else
+	-- 				lg.rectangle("line", self.x - 28+48, self.y - 42, 58, 58)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 	
 end
 
 function player:jump()
+	if self.state ~= "normal" then
+		return
+	end
+
 	sfx_jump:stop()
 	sfx_jump:setPitch(1.4 + math.random(10)/10)
 	sfx_jump:play()

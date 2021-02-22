@@ -9,6 +9,9 @@ loader = require "loader"
 ui = require "ui"
 deathwall = require "deathwall"
 
+require "ghost"
+require "medusa"
+require "strawberry"
 require "explosion"
 require "gib"
 require "goomba"
@@ -65,7 +68,8 @@ f4_key = _OFF
 
 font_scale = 2
 
-updateables = {"tiles", "goombas", "cookies", "pickups", "enemy_data", "explosions", "gibs"}
+updateables = {"tiles", "goombas", "cookies", "strawberrys", "medusas", "ghosts",
+	"pickups", "enemy_data", "explosions", "gibs"}
 
 logo_opacity = 255
 logo_timer = 0

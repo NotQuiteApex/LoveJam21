@@ -13,9 +13,9 @@ function loader.init()
 	loader.temp_map = {
 		"#        I F           I             I F          I             I F             ",
 		"#  WW    I ^^^^^^^     I             I            I       G     I          WW   ",
-		"#  WW    I   nnn       I       WW    I            I             I          WW   ",
+		"#  WW    I   nnn       I     m WW    I            I             I          WW   ",
 		"#        I             I       WW    I   c bb c   I      c c    I               ",
-		"# P      I             I             I ^^^^^^^^   I  ^^^^^^^^   I               ",
+		"# P      I             I m           I ^^^^^^^^   I  ^^^^^^^^   I               ",
 		"####     I      g      I             I^^          I             I               ",
 		"# T      I             I    ^^     ^^^^      s    I     T   s   I        T      ",
 		"#        I   ^^     oo I  ^^^^^      I           oI             I   oo          ",
@@ -125,15 +125,17 @@ function loader.load()
 			elseif m == "F" then -- (F)lag
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "flag.soda", false)
 			elseif m == "s" then -- (s)wiper
-				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
+				--enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
 			elseif m == "b" then -- straw(b)erry
-				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "strawberry.soda", ENEMY_STRAWBERRY)
+				strawberrys[#strawberrys+1] = strawberry:new(map_spawn_x, map_spawn_y)
 			elseif m == "g" then -- (g)host
-				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "ghost.soda", ENEMY_GHOST)
+				ghosts[#ghosts+1] = ghost:new(map_spawn_x, map_spawn_y)
 			elseif m == "c" then -- (c)ookie
 				cookies[#cookies+1] = cookie:new(map_spawn_x, map_spawn_y)
 			elseif m == "o" then -- g(o)omba
 				goombas[#goombas+1] = goomba:new(map_spawn_x, map_spawn_y)
+			elseif m == "m" then -- g(o)omba
+				medusas[#medusas+1] = medusa:new(map_spawn_x, map_spawn_y)
 			elseif m == "n" then -- pea(n)ut butter
 				local choose = math.random(4)
 				local pb_name = "pb.soda"

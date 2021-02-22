@@ -78,6 +78,7 @@ end
 function cookie:draw()
 	lg.push()
 	lg.translate(self.px, self.py)
+	lg.scale(1.5,1.5)
 	polygon.draw(model)
 	lg.pop()
 end
@@ -89,20 +90,24 @@ function cookie:damage(o)
 
 	if self.state == "normal" then
 		self.state = "primed"
-		self.xv = dx * 300
+		self.xv = dx * 600
 		self.yv = -200
 	else
-		self.xv = dx * 300
+		self.xv = dx * 600
 		self.yv = -200
 		self.y = self.y-2
 	end
+
+	sfx_enemy_pop:stop()
+	sfx_enemy_pop:setPitch(0.9 + math.random(4)/10)
+	sfx_enemy_pop:play()
 end
 
 function cookie:delete()
 	bumpwrld:remove(self)
 	local spawndrop = lume.weightedchoice({
 		[true] = 1,
-		[false] = 0
+		[false] = 4*2
 	})
 	if spawndrop then
 		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
@@ -115,4 +120,6 @@ function cookie:delete()
 	end
 	-- spawn explosion
 	explosions[#explosions+1] = explosion:new(self.x, self.y, 360, 750)
+	
+	ent_player.score = ent_player.score + 10
 end

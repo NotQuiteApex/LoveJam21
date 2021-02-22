@@ -78,7 +78,7 @@ function goomba:delete()
 	bumpwrld:remove(self)
 	local spawndrop = lume.weightedchoice({
 		[true] = 1,
-		[false] = 0
+		[false] = 5*2
 	})
 	if spawndrop then
 		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
@@ -89,4 +89,6 @@ function goomba:delete()
 			math.pi*math.random(), math.random(-60*6, 60*6),
 			-math.random(500, 1000), math.pi/2*math.random(-60, 60))
 	end
+
+	ent_player.score = ent_player.score + 5
 end
