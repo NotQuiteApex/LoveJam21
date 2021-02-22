@@ -32,7 +32,7 @@ function import.open(fname)
 		file = love.filesystem.getInfo(fname)
 		
 		if (not file) then
-			print("Error: could not load .soda file")
+			print("Error: could not load .soda file", fname)
 		else
 		
 			-- Reset import vars

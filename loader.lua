@@ -6,6 +6,7 @@ loader.kill_next = -2
 loader.spawn_after = 100
 loader.x = 0
 loader.spawn_remainder = 0
+loader.spawn_after_static = 0
 
 function loader.init()
 
@@ -22,6 +23,7 @@ function loader.init()
 	}
 	
 	loader.load()
+	deathwall.x = -400
 
 end
 
@@ -150,6 +152,7 @@ function loader.load()
 	loader.spawn_after = (math.floor(#map[1]) * 80) / 2
 	local old_rem = loader.spawn_remainder
 	loader.spawn_remainder = loader.spawn_after
+
 	loader.spawn_after = loader.spawn_after + old_rem
 	
 	loader.x = loader.x + (#map[1] * 80)
@@ -161,6 +164,12 @@ function loader.load()
 			end
 		end
 	end
+	
+	deathwall.x = math.max(loader.spawn_after_static - 1000, deathwall.x)
+	deathwall.speed = math.min(deathwall.speed + DEATHWALL_SPEED_INCREASE, DEATHWALL_MAX_SPEED)
+	deathwall.temp_speed = DEATHWALL_TEMP_SPEEDUP
+	
+	loader.spawn_after_static = loader.spawn_after_static + loader.spawn_after
 	
 	loader.kill_next = loader.kill_next + 1
 	

@@ -7,6 +7,7 @@ class = require "engine.class"
 bump = require "engine.bump"
 loader = require "loader"
 ui = require "ui"
+deathwall = require "deathwall"
 
 require "explosion"
 require "gib"
@@ -112,6 +113,12 @@ function love.load()
 	mdl_illteteka = polygon.new("soda/illteteka.soda")
 	mdl_logo = polygon.new("soda/logo.soda")
 	mdl_titlescreen = polygon.new("soda/titlescreen.soda")
+	
+	mdl_skull = polygon.new("soda/skull.soda")
+	mdl_bone = polygon.new("soda/bone.soda")
+	mdl_skull2 = polygon.new("soda/skull2.soda")
+	mdl_bone2 = polygon.new("soda/bone2.soda")
+	mdl_edgesoul = polygon.new("soda/edgeofsoul.soda")
 
 	ui_heart = polygon.new("soda/ui_heart.soda")
 	ui_heartright = polygon.new("soda/ui_heartright.soda")
@@ -131,6 +138,7 @@ function love.load()
 	music_intro:setLooping(true)
 	
 	ui.init()
+	deathwall.init()
 	
 	if GAME_MODE == MODE_LOGO or GAME_MODE == MODE_MENU then
 		music_intro:play()
@@ -205,6 +213,8 @@ function drawGame()
 			v:draw()
 		end
 	end
+
+	deathwall.draw()
 
 	ent_player:draw()
 
@@ -324,6 +334,8 @@ function updateGame(dt)
 			end
 		end
 	end
+
+	deathwall.update(dt)
 
 	ent_player:update(dt)
 
