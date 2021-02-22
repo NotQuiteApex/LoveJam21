@@ -5,6 +5,8 @@ strawberrys = {}
 
 local strawb_spr = polygon.new("soda/strawberry.soda")
 
+my_time = 0
+
 function strawberry:init(x, y)
 	self.x = x
 	self.y = y
@@ -21,12 +23,12 @@ function strawberry:init(x, y)
 end
 
 function strawberry:update(dt)
-
+	my_time = lt.getTime()
 end
 
 function strawberry:draw()
 	lg.push()
-	lg.translate(self.x, self.y+30*math.sin(lt.getTime()*2+self.timeroffset))
+	lg.translate(self.x, self.y+30*math.sin(my_time*2+self.timeroffset))
 	lg.scale(1.5, 1.5)
 	polygon.draw(strawb_spr)
 	lg.pop()

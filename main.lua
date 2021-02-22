@@ -28,7 +28,9 @@ default_height = 800
 MODE_LOGO = 1
 MODE_MENU = 2
 MODE_GAME = 3
-GAME_MODE = MODE_GAME--MODE_LOGO
+GAME_MODE = MODE_GAME
+
+SKIP_INTRO = true
 
 lg = love.graphics
 local lk = love.keyboard
@@ -70,6 +72,12 @@ f4_key = _OFF
 font_scale = 2
 
 background_x = 0
+
+game_opacity = 255
+intro_timer = 0
+
+sleep = 0
+game_over = false
 
 updateables = {"tiles", "goombas", "cookies", "strawberrys", "medusas", "ghosts",
 	"cannonballs", "steamypbs", "pickups", "explosions", "gibs"}
@@ -129,6 +137,10 @@ function love.load()
 	mdl_logo = polygon.new("soda/logo.soda")
 	mdl_titlescreen = polygon.new("soda/titlescreen.soda")
 	
+	mdl_guy = polygon.new("soda/Wallstreet_Journal1.soda")
+	mdl_guy2 = polygon.new("soda/Wallstreet_Journal2.soda")
+	mdl_guy3 = polygon.new("soda/Wallstreet_Journal3.soda")
+	
 	mdl_skull = polygon.new("soda/skull.soda")
 	mdl_bone = polygon.new("soda/bone.soda")
 	mdl_skull2 = polygon.new("soda/skull2.soda")
@@ -143,6 +155,13 @@ function love.load()
 	ui_heartcase = polygon.new("soda/ui_heartcase.soda")
 	
 	sfx_enemy_pop = la.newSource("sfx/enemy_pop.wav", "static")
+	sfx_die = la.newSource("sfx/death.wav", "static")
+	snd_intro = la.newSource("sfx/intro.wav", "static")
+	snd_intro:setVolume(0.4)
+	
+	sfx_get_frisbee = la.newSource("sfx/get_frisbee.wav", "static")
+	sfx_throw_frisbee = la.newSource("sfx/throw_frisbee.wav", "static")
+	sfx_collect = la.newSource("sfx/collect.wav", "static")
 	
 	sfx_health_pickup = la.newSource("sfx/get_heart.wav", "static")
 	sfx_health_pickup:setVolume(0.7)
@@ -153,6 +172,9 @@ function love.load()
 	music_intro = la.newSource("music/dracula_titlescreen.ogg", "stream")
 	music_intro:setVolume(0.4)
 	music_intro:setLooping(true)
+	music_end = la.newSource("music/highscore.ogg", "stream")
+	music_end:setVolume(0.4)
+	music_end:setLooping(true)
 	
 	ui.init()
 	deathwall.init()
@@ -162,7 +184,6 @@ function love.load()
 	end
 	
 	if GAME_MODE == MODE_GAME then
-		music_loop:play()
 		logo_opacity = 0
 	end
 	
@@ -220,7 +241,7 @@ function drawGame()
 	while i <= 17 do
 	
 		
-		while j <= 9 do
+		while j <= 10 do
 		
 			lg.push()
 			lg.translate( (i-1)*80, (j-1)*80)
@@ -251,7 +272,11 @@ function drawGame()
 
 	deathwall.draw()
 
-	ent_player:draw()
+	if not game_over then
+		ent_player:draw()
+	else
+		ui.drawGameOver()
+	end
 	
 
 	lg.pop()
@@ -283,6 +308,9 @@ function drawGame()
 		polygon.draw(ui_subweapons[ent_player.subweapon])
 	end
 	lg.pop()
+	
+	lg.setColor(0,0,0,game_opacity/255)
+	lg.rectangle("fill", 0, 0, default_width, default_height)
 end
 
 function drawLogo()
@@ -344,16 +372,20 @@ function love.update(dt)
 
 	ui.update(dt)
 	
-	if not game_paused then
+	if sleep == 0 then
+		if not game_paused then
 
-		if GAME_MODE == MODE_LOGO then
-			updateLogo(dt)
-		elseif GAME_MODE == MODE_MENU then
-			updateMenu(dt)
-		elseif GAME_MODE == MODE_GAME then
-			updateGame(dt)
+			if GAME_MODE == MODE_LOGO then
+				updateLogo(dt)
+			elseif GAME_MODE == MODE_MENU then
+				updateMenu(dt)
+			elseif GAME_MODE == MODE_GAME then
+				updateGame(dt)
+			end
+		
 		end
-	
+	else
+		sleep = math.max(sleep - 60 * dt, 0)
 	end
 	
 	-- QUIT
@@ -364,19 +396,45 @@ function love.update(dt)
 end
 
 function updateGame(dt)
-	for _,U in ipairs(updateables) do
-		for i, v in lume.ripairs(_G[U]) do
-			v:update(dt)
-			if v.deleteself then
-				v:delete()
-				table.remove(_G[U], i)
+
+	game_opacity = math.max(game_opacity - 4 * 60 * dt, 0)
+	if SKIP_INTRO == false or intro_timer < 11 * 60 then
+		camera_x = ent_player.x
+		if game_opacity == 0 then
+			intro_timer = math.min(intro_timer + 60 * dt, 11 * 60)
+			if snd_intro:isPlaying() == false then
+				music_loop:stop()
+				snd_intro:stop()
+				snd_intro:play()
 			end
 		end
+		
+		if intro_timer == 11 * 60 or SKIP_INTRO then
+			snd_intro:stop()
+			music_loop:play()
+			SKIP_INTRO = true
+			intro_timer = 11 * 60
+		end
+	
+	else
+
+		for _,U in ipairs(updateables) do
+			for i, v in lume.ripairs(_G[U]) do
+				v:update(dt)
+				if v.deleteself then
+					v:delete()
+					table.remove(_G[U], i)
+				end
+			end
+		end
+
+		deathwall.update(dt)
+
+		if not game_over then
+		ent_player:update(dt)
+		end
+	
 	end
-
-	deathwall.update(dt)
-
-	ent_player:update(dt)
 
 end
 
@@ -414,8 +472,6 @@ function updateLogo(dt)
 end
 
 function updateMenu(dt)
-
-	logo_opacity = math.max(logo_opacity - 4 * 60 * dt, 0)
 
 end
 

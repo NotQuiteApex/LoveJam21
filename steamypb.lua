@@ -20,6 +20,7 @@ function steamypb:init(x, y, dir)
 end
 
 function steamypb:update(dt)
+	random_color = math.random()
 	if self.state == "throw" then
 		self.x = self.x+ self.dir*600*dt
 		self.y = self.y + self.yv*dt
@@ -75,7 +76,7 @@ function steamypb:draw()
 		polygon.draw(pb_spr)
 		lg.pop()
 	else
-		lg.setColor(1, math.random()*0.75, 0, 1)
+		lg.setColor(1, random_color*0.75, 0, 1)
 		lg.rectangle("fill", self.x-self.radius/2, self.y-self.radius/2, self.radius, self.radius/2)
 		lg.setColor(1,1,1)
 	end

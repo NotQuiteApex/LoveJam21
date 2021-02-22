@@ -3,6 +3,8 @@ local la = love.audio
 explosion = class:new()
 explosions = {}
 
+random_color = 0
+
 function explosion:init(x, y, maxradius, radiusvel)
 	self.x = x
 	self.y = y
@@ -14,7 +16,7 @@ function explosion:init(x, y, maxradius, radiusvel)
 end
 
 function explosion:update(dt)
-
+	random_color = math.random()
 	local function filter(i)
 		return i.isEnemy or i.type == "player"
 	end
@@ -31,7 +33,7 @@ function explosion:update(dt)
 end
 
 function explosion:draw()
-	lg.setColor(1, math.random()*0.75, 0, 1)
+	lg.setColor(1, random_color*0.75, 0, 1)
 	lg.rectangle("fill", self.x-self.radius/2, self.y-self.radius/2, self.radius, self.radius)
 	lg.setColor(1,1,1)
 end

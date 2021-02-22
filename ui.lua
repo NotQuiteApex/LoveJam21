@@ -25,6 +25,19 @@ detect_win_y = 0
 pause_menu_tip_cursor = 1
 ui.pause_menu_tip = {"RP_A is paused."}
 
+main_fade_out = false
+music_intro_vol = 0.4
+
+NOT_DEAD = 0
+DEATH_FLASH = 2
+DEATH_FALL = 3
+DEATH_CELEBRATE = 4
+stages_of_death = NOT_DEAD
+
+game_over_timer = 0
+go_player_frame = true
+player_angle = 0
+
 --End pause menu vars
 
 function ui.init()
@@ -181,7 +194,7 @@ function ui.update(dt)
 		detect_win_x, detect_win_y = new_pos_x, new_pos_y
 	end
 	
-	if GAME_MODE == MODE_LOGO or GAME_MODE == MODE_MENU then
+	if GAME_MODE == MODE_LOGO or GAME_MODE == MODE_MENU or SKIP_INTRO == false or game_over then
 		game_paused = false
 	end
 	
@@ -230,36 +243,145 @@ function ui.update(dt)
 	end
 	
 	ui.titlescreenUpdate(dt)
+	ui.gameOverUpdate(dt)
+
+end
+
+function ui.gameOverInit()
+	stages_of_death = DEATH_FLASH
+	music_loop:stop()
+	-- sfx_die:stop()
+	-- sfx_die:play()
+end
+
+function ui.drawDead()
+
+	local player_model = mdl_player
+	if player_animation_flip then
+		player_model = mdl_player_walk
+	end
+
+	local x_draw = ent_player.x-6
+	if ent_player.player_facing == -1 then
+	lg.push()
+	x_draw = -ent_player.x-58
+	lg.scale(-1,1)
+	end
+	
+	lg.push()
+	lg.translate(x_draw, ent_player.y-16)
+	
+	lg.translate(32, 40)
+	lg.rotate(math.rad(player_angle))
+	
+	lg.translate(-32, -40)
+	
+	polygon.draw(player_model)
+	lg.pop()
+	
+	if ent_player.player_facing == -1 then
+	lg.pop()
+	end
+
+end
+
+function ui.drawGameOver()
+
+	if stages_of_death == DEATH_FLASH then
+	
+		lg.setColor(c_black)
+		lg.rectangle("fill", camera_x - default_width/2, 0, default_width, default_height)
+		lg.setShader(shader_mask)
+		setMask(1, 1, 1, 1)
+		ui.drawDead()
+		lg.setShader()
+		
+	
+	elseif stages_of_death == DEATH_FALL then
+	
+		lg.push()
+		ui.drawDead()
+		lg.pop()
+	
+	end
+
+end
+
+function ui.gameOverUpdate(dt)
+
+	if stages_of_death == DEATH_FLASH then
+	
+		go_player_frame = player_animation_flip
+		game_over_timer = game_over_timer + 1
+		if game_over_timer == 2 then
+			sleep = 10
+		elseif game_over_timer > 3 and sleep == 0 then
+			game_over_timer = 0
+			stages_of_death = DEATH_FALL
+		end
+	
+	elseif stages_of_death == DEATH_FALL then
+		ent_player.y = ent_player.y + 4 * dt * 60
+		player_angle = player_angle + 4 * dt * 60
+		
+		local wait_len = 60 * 3
+		
+		game_over_timer = math.min(game_over_timer + dt * 60, wait_len)
+		
+		if ent_player.y > default_height + 80 and game_over_timer >= wait_len then
+			stages_of_death = DEATH_CELEBRATE
+			music_end:stop()
+			music_end:play()
+		end
+		
+	end
 
 end
 
 function ui.titlescreenUpdate(dt)
 
 	if GAME_MODE == MODE_MENU then
-
-		go_menu_cursor = ui.updateCursor(go_menu_cursor, #ui.go_menu, dt)
-		
-		-- Action for pause menu
-		if z_key == _RELEASE or enter_key == _RELEASE or space_key == _RELEASE then
+	
+		if main_fade_out then
 			
-			local get_option = ui.go_menu[go_menu_cursor].index
+			logo_opacity = math.min(logo_opacity + 4 * dt * 60, 255)
+			music_intro_vol = 0.4 * (1 - (logo_opacity/255))
+			music_intro:setVolume(music_intro_vol)
 			
-			if get_option == GO_RESTART then
+			if logo_opacity == 255 then
 				GAME_MODE = MODE_GAME
 				music_intro:stop()
-				music_loop:play()
+				music_intro:setVolume(0.4)
 				logo_opacity = 0
-			elseif get_option == GO_QUIT then
-				love.event.quit()
+				main_fade_out = false
 			end
-
-			z_key = _OFF
-			enter_key = _OFF
-			space_key = _OFF
+		
+		else
 			
-		end -- end action button on menu
+			logo_opacity = math.max(logo_opacity - 4 * 60 * dt, 0)
+			
+			go_menu_cursor = ui.updateCursor(go_menu_cursor, #ui.go_menu, dt)
+			
+			-- Action for pause menu
+			if z_key == _RELEASE or enter_key == _RELEASE or space_key == _RELEASE then
+				
+				local get_option = ui.go_menu[go_menu_cursor].index
+				
+				if get_option == GO_RESTART then
+					main_fade_out = true
+				elseif get_option == GO_QUIT then
+					love.event.quit()
+				end
 
-	end -- end ghost spawn
+				z_key = _OFF
+				enter_key = _OFF
+				space_key = _OFF
+				
+			end -- end action button on menu
+
+		end -- end ghost spawn
+	
+	end
 
 end
 

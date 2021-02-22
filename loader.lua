@@ -19,7 +19,7 @@ function loader.init()
 		"####     I      g      I             I^^          I             I               ",
 		"# T      I             I    ^^     ^^^^      s    I     T   s   I        T      ",
 		"#        I   ^^     oo I  ^^^^^      I           oI             I   oo          ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"$$$$$$$$$$   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 	
 	loader.load()
@@ -109,7 +109,7 @@ function loader.load()
 			if m == "#" then -- brick wall
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "brick.soda", true)
 			elseif m == "P" then -- player
-				ent_player = player:new(map_spawn_x, map_spawn_y)
+				ent_player = player:new(map_spawn_x, map_spawn_y + 20)
 			elseif m == "$" then -- floor
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "brick2.soda", true)
 			elseif m == "^" then -- spikes

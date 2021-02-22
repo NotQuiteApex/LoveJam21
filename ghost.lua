@@ -25,6 +25,7 @@ function ghost:init(x, y)
 end
 
 function ghost:update(dt)
+	my_time = lt.getTime()
 	if not self.throwstate then
 		self.throwtimer = self.throwtimer + dt
 		if self.throwtimer > throwwaitmax then
@@ -51,7 +52,7 @@ end
 
 function ghost:draw()
 	lg.push()
-	lg.translate(self.x-35, self.y+15*math.sin(lt.getTime()*2.5))
+	lg.translate(self.x-35, self.y+15*math.sin(my_time*2.5))
 	polygon.draw(ghost_spr)
 	lg.pop()
 end

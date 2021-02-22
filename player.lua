@@ -259,6 +259,17 @@ function player:update(dt)
 				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
 			elseif o.droptype == "weapon" then
 				self.subweapon = o.weptype
+				
+				if o.weptype == "frisbee" then
+					sfx_get_frisbee:stop()
+					sfx_get_frisbee:setPitch(1 + math.random()*0.1 - 0.05)
+					sfx_get_frisbee:play()
+				else
+					sfx_collect:stop()
+					sfx_collect:setPitch(1 + math.random()*0.1 - 0.05)
+					sfx_collect:play()
+				end
+				
 				o.deleteself = true
 			end
 		end
@@ -356,6 +367,11 @@ function player:update(dt)
 	if self.subequipped then
 		if comma_key == _PRESS then
 			if self.subweapon == "frisbee" then
+			
+				sfx_throw_frisbee:stop()
+				sfx_throw_frisbee:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_throw_frisbee:play()
+			
 				self.subequipped = false
 				
 				local push_frisbee_x = 70
@@ -371,9 +387,19 @@ function player:update(dt)
 				frisbee_air = 1
 				frisbee_angle = 0
 			elseif self.subweapon == "cannon" then
+			
+				sfx_throw_frisbee:stop()
+				sfx_throw_frisbee:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_throw_frisbee:play()
+			
 				cannonballs[#cannonballs+1] = cannonball:new(self.x+30, self.y-40, self.player_facing)
 				self.subequipped = false
 			elseif self.subweapon == "steamypb" then
+				
+				sfx_throw_frisbee:stop()
+				sfx_throw_frisbee:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_throw_frisbee:play()
+			
 				steamypbs[#steamypbs+1] = steamypb:new(self.x+30, self.y-40, self.player_facing)
 				self.subequipped = false
 			end
@@ -421,6 +447,10 @@ function player:update(dt)
 				frisbee_angle = 0
 				frisbee_theta = 1
 				self.subequipped = true
+				
+				sfx_get_frisbee:stop()
+				sfx_get_frisbee:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_get_frisbee:play()
 			end
 		
 			local function filter(i) return i.isEnemy == true end
@@ -444,7 +474,14 @@ function player:update(dt)
 			end
 		end
 	end
-
+	
+	if self.y > default_height then
+		player:forceKill()
+	end
+	
+	if self.x + 40 < deathwall.x + 400 then
+		player:forceKill()
+	end
 	
 	-- This moves the endless level
 	local x_change = self.x - ox
@@ -527,12 +564,29 @@ function player:jump()
 	self.coyotetimer = 0
 end
 
+function player:forceKill()
+
+	self.health = 0
+	ent_player.health = 0
+	for k = 1, #sfx_hurt do sfx_hurt[k]:stop() end
+	local sfx = math.random(#sfx_hurt)
+	sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
+	sfx_hurt[sfx]:play()
+	
+	if self.health == 0 then
+		ui.gameOverInit()
+		game_over = true
+	end
+
+end
+
 function player:damage(v, o)
 	if self.state ~= "hurt" and not self.iframesactive then
 		self.xv = 0
 		self.yv = 0
 		self.state = "hurt"
-		self.health = self.health - 1
+		self.health = math.max(self.health - 1, 0)
+		
 		if v.normalX == 0 and o and o.xv then
 			self.hitdirection = lume.sign(o.xv)
 		elseif v.normalX == 0 then
@@ -546,5 +600,10 @@ function player:damage(v, o)
 		local sfx = math.random(#sfx_hurt)
 		sfx_hurt[sfx]:setPitch(1 + math.random()*0.1 - 0.05)
 		sfx_hurt[sfx]:play()
+		
+		if self.health == 0 then
+			ui.gameOverInit()
+			game_over = true
+		end
 	end
 end
