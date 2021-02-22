@@ -23,6 +23,12 @@ frisbee_air_kick = 14
 frisbee_angle = 0
 frisbee_theta = 1
 
+cannon_timer = 0
+local cannon_timer_max = 5
+
+steamypb_timer = 0
+local steamypb_timer_max = 3
+
 player_walk_timer = 0
 player_animation_flip = false
 player_walk_timer_max = 10
@@ -212,10 +218,10 @@ function player:update(dt)
 	-- ##################
 	-- collision filter, for determining how things should react on contact
 	local function filter(i, o)
-		if o.isEnemy or o.type == "pickup" then
-			return "cross"
+		if o.type == "ground" then
+			return "slide"
 		end
-		return "slide"
+		return "cross"
 	end
 
 	-- run collision detection with the filter
@@ -253,6 +259,7 @@ function player:update(dt)
 				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
 			elseif o.droptype == "weapon" then
 				self.subweapon = o.weptype
+				o.deleteself = true
 			end
 		end
 	end
@@ -364,7 +371,11 @@ function player:update(dt)
 				frisbee_air = 1
 				frisbee_angle = 0
 			elseif self.subweapon == "cannon" then
+				cannonballs[#cannonballs+1] = cannonball:new(self.x+30, self.y-40, self.player_facing)
+				self.subequipped = false
 			elseif self.subweapon == "steamypb" then
+				steamypbs[#steamypbs+1] = steamypb:new(self.x+30, self.y-40, self.player_facing)
+				self.subequipped = false
 			end
 		end
 	end
@@ -420,7 +431,17 @@ function player:update(dt)
 				end
 			end
 		elseif self.subweapon == "cannon" then
+			cannon_timer = cannon_timer + dt
+			if cannon_timer > cannon_timer_max then
+				self.subequipped = true
+				cannon_timer = 0
+			end
 		elseif self.subweapon == "steamypb" then
+			steamypb_timer = steamypb_timer + dt
+			if steamypb_timer > steamypb_timer_max then
+				self.subequipped = true
+				steamypb_timer = 0
+			end
 		end
 	end
 

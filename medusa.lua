@@ -53,18 +53,20 @@ end
 
 function medusa:delete()
 	bumpwrld:remove(self)
-	local spawndrop = lume.weightedchoice({
-		[true] = 1,
-		[false] = 5*2
-	})
-	if spawndrop then
-		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+	if not self.deletenoscore then
+		ent_player.score = ent_player.score + 10
+		local spawndrop = lume.weightedchoice({
+			[true] = 1,
+			[false] = 5
+		})
+		if spawndrop then
+			pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+		end
+		-- spawn gibs
+		for i=1,3 do
+			gibs[#gibs+1] = gib:new(self.x+30, self.y,
+				math.pi*math.random(), math.random(-60*6, 60*6),
+				-math.random(500, 1000), math.pi/2*math.random(-60, 60))
+		end
 	end
-	-- spawn gibs
-	for i=1,3 do
-		gibs[#gibs+1] = gib:new(self.x+30, self.y,
-			math.pi*math.random(), math.random(-60*6, 60*6),
-			-math.random(500, 1000), math.pi/2*math.random(-60, 60))
-	end
-	ent_player.score = ent_player.score + 10
 end

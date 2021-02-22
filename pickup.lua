@@ -20,8 +20,8 @@ function pickup:init(x, y)
 		self.droptype = "weapon"
 		self.weptype = lume.weightedchoice({
 			["frisbee"] = 1,
-			["cannon"] = 0,
-			["steamypb"] = 0,
+			["cannon"] = 1,
+			["steamypb"] = 1,
 		})
 	end
 
@@ -48,8 +48,8 @@ function pickup:draw()
 		polygon.draw(ui_heart)
 		polygon.draw(ui_heartcase)
 	elseif self.droptype == "weapon" then
-		lg.scale(3,-2)
-		polygon.draw(ui_heartcase)
+		lg.scale(0.5, 0.5)
+		polygon.draw(ui_subweapons[self.weptype])
 	end
 	lg.pop()
 end

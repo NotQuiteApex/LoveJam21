@@ -9,6 +9,8 @@ loader = require "loader"
 ui = require "ui"
 deathwall = require "deathwall"
 
+require "steamypb"
+require "cannonball"
 require "ghost"
 require "medusa"
 require "strawberry"
@@ -16,7 +18,6 @@ require "explosion"
 require "gib"
 require "goomba"
 require "cookie"
-require "enemy"
 require "tile"
 require "player"
 require "pickup"
@@ -69,7 +70,7 @@ f4_key = _OFF
 font_scale = 2
 
 updateables = {"tiles", "goombas", "cookies", "strawberrys", "medusas", "ghosts",
-	"pickups", "enemy_data", "explosions", "gibs"}
+	"cannonballs", "steamypbs", "pickups", "explosions", "gibs"}
 
 logo_opacity = 255
 logo_timer = 0
@@ -82,6 +83,9 @@ ui_subweapons = {
 	cannon = polygon.new("soda/ui_cannon.soda"),
 	steamypb = polygon.new("soda/ui_steamypb.soda"),
 }
+
+sfx_explode = la.newSource("sfx/explosion.wav", "static")
+sfx_explode:setVolume(0.5)
 
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
@@ -215,10 +219,6 @@ function drawGame()
 	if rnd == 1 then rnd = 0.5 end
 	lg.translate(lume.round(-camera_x + half_width, rnd),0) --lume.round(-camera_y + half_height, rnd)
 
-	for i, v in ipairs(enemy_data) do
-		v:draw()
-	end
-
 	for _,U in ipairs(updateables) do
 		for i, v in ipairs(_G[U]) do
 			v:draw()
@@ -340,11 +340,6 @@ function love.update(dt)
 end
 
 function updateGame(dt)
-
-	for i, v in ipairs(enemy_data) do
-		v:update(dt)
-	end
-
 	for _,U in ipairs(updateables) do
 		for i, v in lume.ripairs(_G[U]) do
 			v:update(dt)
