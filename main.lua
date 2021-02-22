@@ -76,6 +76,13 @@ logo_timer = 0
 logo_count = 0
 logo_fade_in = true
 
+ui_box = polygon.new("soda/ui_box.soda")
+ui_subweapons = {
+	frisbee = polygon.new("soda/ui_frisbee.soda"),
+	cannon = polygon.new("soda/ui_cannon.soda"),
+	steamypb = polygon.new("soda/ui_steamypb.soda"),
+}
+
 function setDefaultWindow(fs)
 	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
 	game_paused = true
@@ -243,6 +250,15 @@ function drawGame()
 	lg.print(scoretxt, math.floor(900*text_scale),math.floor(32*text_scale), 0, font_scale)
 	lg.pop()
 
+	lg.push()
+	lg.translate(-64, 0)
+	lg.translate(default_width/2, 20)
+	lg.scale(0.5, 0.5)
+	polygon.draw(ui_box)
+	if ent_player.subweapon ~= "none" then
+		polygon.draw(ui_subweapons[ent_player])
+	end
+	lg.pop()
 end
 
 function drawLogo()
