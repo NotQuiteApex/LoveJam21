@@ -28,7 +28,7 @@ default_height = 800
 MODE_LOGO = 1
 MODE_MENU = 2
 MODE_GAME = 3
-GAME_MODE = MODE_GAME
+GAME_MODE = MODE_MENU
 
 SKIP_INTRO = true
 
@@ -133,6 +133,8 @@ function love.load()
 	mdl_ghost = polygon.new("soda/ghost.soda")
 	mdl_cookie = polygon.new("soda/cookie.soda")
 	
+	mdl_percy = polygon.new("soda/percy.soda")
+	mdl_apex = polygon.new("soda/apex.soda")
 	mdl_illteteka = polygon.new("soda/illteteka.soda")
 	mdl_logo = polygon.new("soda/logo.soda")
 	mdl_titlescreen = polygon.new("soda/titlescreen.soda")
@@ -323,8 +325,14 @@ function drawLogo()
 		lg.push()
 		lg.scale(1/font_scale)
 		local text_scale = font_scale/1
-		local name_scale = 4
-		lg.printf("NotQuiteApex",0,360*text_scale, (default_width*font_scale)/name_scale, "center", 0 , name_scale, name_scale)
+		local name_scale = 2
+		lg.printf("NotQuiteApex",0,520*text_scale, (default_width*font_scale)/name_scale, "center", 0 , name_scale, name_scale)
+		lg.pop()
+		
+		lg.push()
+		lg.translate(525,252)
+		lg.scale(3)
+		polygon.draw(mdl_apex)
 		lg.pop()
 	elseif logo_count == 1 then
 
@@ -332,6 +340,14 @@ function drawLogo()
 		lg.translate(348,292)
 		lg.scale(0.3)
 		polygon.draw(mdl_illteteka)
+		lg.pop()
+		
+	elseif logo_count == 2 then
+
+		lg.push()
+		lg.translate(525,272)
+		lg.scale(3)
+		polygon.draw(mdl_percy)
 		lg.pop()
 		
 	end
@@ -442,10 +458,10 @@ function updateLogo(dt)
 	
 	if logo_fade_in then
 	
-		logo_opacity = math.max(logo_opacity - 4 * 60 * dt, 0)
+		logo_opacity = math.max(logo_opacity - 6 * 60 * dt, 0)
 		if logo_opacity == 0 then
-			logo_timer = math.min(logo_timer + 60 * dt, 90)
-			if logo_timer == 90 then
+			logo_timer = math.min(logo_timer + 60 * dt, 50)
+			if logo_timer == 50 then
 				logo_fade_in = false
 				logo_timer = 0
 			end
@@ -453,7 +469,7 @@ function updateLogo(dt)
 	
 	else
 	
-		logo_opacity = math.min(logo_opacity + 4 * 60 * dt, 255)
+		logo_opacity = math.min(logo_opacity + 6 * 60 * dt, 255)
 		if logo_opacity == 255 then
 			logo_timer = math.min(logo_timer + 60 * dt, 30)
 			if logo_timer == 30 then
@@ -465,7 +481,7 @@ function updateLogo(dt)
 	
 	end
 	
-	if logo_count == 2 then
+	if logo_count == 3 then
 		GAME_MODE = MODE_MENU
 	end
 

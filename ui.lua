@@ -91,9 +91,17 @@ function ui.draw(rnd)
 	
 	if GAME_MODE == MODE_MENU then
 		lg.push()
-		lg.translate(360,200)
+		lg.translate(360,100)
 		local text_scale = font_scale/1
 		ui.drawMenu(go_menu_cursor, ui.go_menu, text_scale, 1, 2)
+		lg.pop()
+		
+		lg.setColor({1,1,1,1})
+		lg.push()
+		lg.scale(1/font_scale)
+		local this_tip = "a game by NotQuiteApex, Ill Teteka, and Percy_Creates"
+		lg.print(this_tip, 525*text_scale, 700*text_scale, 0, 1, 1)
+		lg.print("WASD to move, N to jump, M to whip, Comma to use items", 521*text_scale, 650*text_scale, 0, 1, 1)
 		lg.pop()
 	end
 	
@@ -250,8 +258,6 @@ end
 function ui.gameOverInit()
 	stages_of_death = DEATH_FLASH
 	music_loop:stop()
-	-- sfx_die:stop()
-	-- sfx_die:play()
 end
 
 function ui.drawDead()
