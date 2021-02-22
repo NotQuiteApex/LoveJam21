@@ -29,7 +29,7 @@ end
 
 function loader.loadTemplate()
 	
-	local x = math.random(7)
+	local x = math.random(9)
 	
 	loader.step = loader.step + 1
 	
@@ -47,6 +47,10 @@ function loader.loadTemplate()
 		loader.template7()
 	elseif x == 7 then
 		loader.template8()
+	elseif x == 8 then
+		loader.template9()
+	elseif x == 9 then
+		loader.template3()
 	end
 	
 	loader.load()
@@ -56,15 +60,15 @@ end
 function loader.template1()
 
 	loader.temp_map = {
-		"                   I                 ",
-		"              WW   I           WW    ",
-		"              WW   I           WW    ",
-		"       WW          I                 ",
-		"       WW          I        g        ",
-		"                   I                 ",
-		"    T              I        @@@@@@   ",
-		"  ^  o   o   o ^   I   [==========]  ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"                   I                  ",
+		"              WW   I            WW    ",
+		"              WW   I            WW    ",
+		"       WW          I                  ",
+		"       WW          I         g        ",
+		"                   I                  ",
+		"    T              I         @@@@@@   ",
+		"  ^  o   o   o ^   I    [==========]  ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
 end
@@ -89,15 +93,15 @@ end
 function loader.template3()
 
 	loader.temp_map = {
-		"    I F                I F           ",
-		"    I                  I         WW  ",
-		"    I        WW        I         WW  ",
-		"    I        WW        I             ",
-		"    I                  I             ",
-		"    I                  I        G    ",
-		"    I                  I  m          ",
-		" cucucucucu      ucucucucucu         ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"    I F                    I F           ",
+		"    I                      I         WW  ",
+		"    I          WW          I         WW  ",
+		"    I          WW          I             ",
+		"    I                      I             ",
+		"    I                      I        G    ",
+		"    I                      I  m          ",
+		" cucucucucu          ucucucucucu         ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
 end
@@ -153,20 +157,53 @@ end
 function loader.template7()
 
 	loader.temp_map = {
-		"      I                      WW      ",
-		"      I                      WW      ",
-		"      I       WW                     ",
-		"      I       WW                     ",
-		"      I                              ",
-		"      I                      G       ",
-		"  T   I           b  c               ",
-		"      I       ^^^^^^^^^              ",
-		"$$$$$$$$$$$               $$$$$$$$$$$",
+		"      I                      WW   ",
+		"      I                      WW   ",
+		"      I       WW                  ",
+		"      I       WW                  ",
+		"      I                           ",
+		"      I                      G    ",
+		"  T   I           b  c            ",
+		"      I       ^^^^^^^^^           ",
+		"$$$$$$$$$$$               $$$$$$$$",
 	}
 
 end
 
 function loader.template8()
+
+	loader.temp_map = {
+		"       I       I F                   ",
+		"       I       I       WW            ",
+		"       I       I       WW            ",
+		"  WW   I       I               m     ",
+		"       I       I                     ",
+		"       I       I  m                  ",
+		"       I       I                     ",
+		"       I       I                     ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+function loader.template9()
+
+	loader.temp_map = {
+		"                   ",
+		"                   ",
+		"        WC         ",
+		"        WW         ",
+		"                   ",
+		"                   ",
+		"                   ",
+		"                   ",
+		"$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+-- Template template
+function loader.templateX()
 
 	loader.temp_map = {
 		"                                     ",
@@ -234,7 +271,7 @@ function loader.load()
 				cookies[#cookies+1] = cookie:new(map_spawn_x, map_spawn_y)
 			elseif m == "o" then -- g(o)omba
 				goombas[#goombas+1] = goomba:new(map_spawn_x, map_spawn_y)
-			elseif m == "m" then -- g(o)omba
+			elseif m == "m" then -- (m)edusa
 				medusas[#medusas+1] = medusa:new(map_spawn_x, map_spawn_y)
 			elseif m == "n" then -- pea(n)ut butter
 				local choose = math.random(4)

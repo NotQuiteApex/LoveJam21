@@ -14,7 +14,7 @@ function love.conf(t)
 	t.audio.mixwithsystem = true
 
 	t.window.title = "Werewolf: The Achocolypse"
-	t.window.icon = nil
+	t.window.icon = "images/icon.png"
 	t.window.width = default_width
 	t.window.height = default_height
 	t.window.borderless = false

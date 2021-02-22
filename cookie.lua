@@ -86,7 +86,8 @@ end
 function cookie:damage(o)
 	local dx = 0
 	if o and o.player_facing then dx = o.player_facing
-	else dx = lume.sign(self.x - o.x) end
+	elseif o and o.x then dx = lume.sign(self.x - o.x)
+	else dx = 1 end
 
 	if self.state == "normal" then
 		self.state = "primed"
@@ -107,24 +108,24 @@ function cookie:delete()
 	bumpwrld:remove(self)
 
 	if not game_over then
-	if not self.deletenoscore then
-		local spawndrop = lume.weightedchoice({
-			[true] = 1,
-			[false] = 4*2
-		})
-		if spawndrop then
-			pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+		if not self.deletenoscore then
+			local spawndrop = lume.weightedchoice({
+				[true] = 1,
+				[false] = 4*2
+			})
+			if spawndrop then
+				pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+			end
+			-- spawn gibs
+			for i=1,20 do
+				gibs[#gibs+1] = gib:new(self.x+30, self.y,
+					math.pi*math.random(), math.random(-60*6, 60*6),
+					-math.random(500, 1000), math.pi/2*math.random(-60, 60))
+			end
+			-- spawn explosion
+			explosions[#explosions+1] = explosion:new(self.x, self.y, 360, 750)
+			
+			ent_player.score = ent_player.score + 10
 		end
-		-- spawn gibs
-		for i=1,20 do
-			gibs[#gibs+1] = gib:new(self.x+30, self.y,
-				math.pi*math.random(), math.random(-60*6, 60*6),
-				-math.random(500, 1000), math.pi/2*math.random(-60, 60))
-		end
-		-- spawn explosion
-		explosions[#explosions+1] = explosion:new(self.x, self.y, 360, 750)
-		
-		ent_player.score = ent_player.score + 10
-	end
 	end
 end

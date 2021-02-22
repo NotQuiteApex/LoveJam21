@@ -116,7 +116,7 @@ function ui.draw(rnd)
 		lg.scale(1/font_scale)
 		local this_tip = "a game by NotQuiteApex, Ill Teteka, and Percy_Creates"
 		lg.print(this_tip, 525*text_scale, 700*text_scale, 0, 1, 1)
-		lg.print("WASD to move, N to jump, M to whip, Comma to use items", 521*text_scale, 650*text_scale, 0, 1, 1)
+		lg.print("WASD to move, N to jump, M to whip, Comma to use items\nArrow keys to cursor over menu options, Enter to select", 521*text_scale, 650*text_scale, 0, 1, 1)
 		lg.pop()
 	end
 	
