@@ -19,6 +19,11 @@ GO_QUIT = 2
 go_menu_cursor = 1
 ui.go_menu = {}
 
+FINAL_RESTART = 1
+FINAL_QUIT = 2
+final_menu_cursor = 1
+ui.final_menu = {}
+
 detect_win_x = 0
 detect_win_y = 0
 
@@ -27,6 +32,9 @@ ui.pause_menu_tip = {"RP_A is paused."}
 
 main_fade_out = false
 music_intro_vol = 0.4
+
+final_fade_out = false
+music_end_vol = 04
 
 NOT_DEAD = 0
 DEATH_FLASH = 2
@@ -37,6 +45,7 @@ stages_of_death = NOT_DEAD
 game_over_timer = 0
 go_player_frame = true
 player_angle = 0
+go_visible = false
 
 --End pause menu vars
 
@@ -45,6 +54,7 @@ function ui.init()
 	-- Load menus
 	ui.loadPauseMenu()
 	ui.loadGOMenu()
+	ui.loadFinalMenu()
 	detect_win_x, detect_win_y = love.window.getPosition()
 	
 end
@@ -57,6 +67,11 @@ end
 function ui.loadGOMenu()
 	ui.addMenu("begin", ui.go_menu, GO_RESTART)
 	ui.addMenu("quit", ui.go_menu, GO_QUIT)
+end
+
+function ui.loadFinalMenu()
+	ui.addMenu("retry", ui.final_menu, FINAL_RESTART)
+	ui.addMenu("quit", ui.final_menu, FINAL_QUIT)
 end
 
 function ui.unpause()
@@ -207,7 +222,7 @@ function ui.update(dt)
 	end
 	
 	-- Pause with enter or esc
-	if GAME_MODE == MODE_GAME then
+	if GAME_MODE == MODE_GAME and not game_over then
 		if (enter_key == _RELEASE and game_paused == false) or escape_key == _RELEASE then
 			game_paused = not game_paused
 			if game_paused == false then
@@ -252,6 +267,7 @@ function ui.update(dt)
 	
 	ui.titlescreenUpdate(dt)
 	ui.gameOverUpdate(dt)
+	ui.finalUpdate(dt)
 
 end
 
@@ -291,24 +307,72 @@ function ui.drawDead()
 
 end
 
-function ui.drawGameOver()
+function ui.drawGameOver(x)
 
-	if stages_of_death == DEATH_FLASH then
+	if x == 1 then
 	
-		lg.setColor(c_black)
-		lg.rectangle("fill", camera_x - default_width/2, 0, default_width, default_height)
-		lg.setShader(shader_mask)
-		setMask(1, 1, 1, 1)
-		ui.drawDead()
-		lg.setShader()
+		if stages_of_death == DEATH_FLASH then
 		
+			lg.setColor(c_black)
+			lg.rectangle("fill", camera_x - default_width/2, 0, default_width, default_height)
+			lg.setShader(shader_mask)
+			setMask(1, 1, 1, 1)
+			ui.drawDead()
+			lg.setShader()
+			
+		
+		elseif stages_of_death == DEATH_FALL then
+		
+			lg.push()
+			ui.drawDead()
+			lg.pop()
+		
+		end
 	
-	elseif stages_of_death == DEATH_FALL then
+	else
 	
-		lg.push()
-		ui.drawDead()
-		lg.pop()
-	
+		if go_visible then
+		
+			lg.push()
+			lg.setColor(c_midnight[1], c_midnight[2], c_midnight[3], (255*0.75)/255)
+			lg.rectangle("fill", -10, -10, default_width+10, default_height+10)
+			
+			lg.pop()
+			
+			lg.push()
+			
+			lg.translate(0, 144)
+			
+			lg.push()
+			local scale_menu = 1
+			local text_scale = font_scale/1
+			
+			local meters = math.floor((player_travel/80)*100)/100
+			local scoretxt = string.format("%06d", ent_player.score)
+			
+			lg.push()
+			
+			lg.translate(-default_width/2,0)
+			
+			lg.setColor(c_white)
+			lg.printf("YOU'RE DEAD!", 0, 24 * text_scale * scale_menu, (default_width*text_scale)/scale_menu, "center", 0, scale_menu, scale_menu)
+			lg.printf("distance travelled: " .. meters .. "m", 0, 72 * text_scale * scale_menu, (default_width*text_scale)/scale_menu, "center", 0, scale_menu, scale_menu)
+			lg.printf("final score: " .. scoretxt, 0, 96 * text_scale * scale_menu, (default_width*text_scale)/scale_menu, "center", 0, scale_menu, scale_menu)
+			
+			lg.pop()
+			
+			lg.translate(0, 96)
+			
+			ui.drawMenu(final_menu_cursor, ui.final_menu, text_scale, 1, 2)
+			lg.pop()
+			
+			lg.pop()
+			
+			lg.setColor(0,0,0,game_opacity/255)
+			lg.rectangle("fill", 0, 0, default_width, default_height)
+		
+		end
+		
 	end
 
 end
@@ -324,6 +388,10 @@ function ui.gameOverUpdate(dt)
 		elseif game_over_timer > 3 and sleep == 0 then
 			game_over_timer = 0
 			stages_of_death = DEATH_FALL
+			
+			sfx_die:stop()
+			sfx_die:play()
+			
 		end
 	
 	elseif stages_of_death == DEATH_FALL then
@@ -338,6 +406,7 @@ function ui.gameOverUpdate(dt)
 			stages_of_death = DEATH_CELEBRATE
 			music_end:stop()
 			music_end:play()
+			go_visible = true
 		end
 		
 	end
@@ -376,6 +445,131 @@ function ui.titlescreenUpdate(dt)
 				if get_option == GO_RESTART then
 					main_fade_out = true
 				elseif get_option == GO_QUIT then
+					love.event.quit()
+				end
+
+				z_key = _OFF
+				enter_key = _OFF
+				space_key = _OFF
+				
+			end -- end action button on menu
+
+		end -- end ghost spawn
+	
+	end
+
+end
+
+function ui.resetGame()
+
+	-- reset game over shit
+	
+	stages_of_death = NOT_DEAD
+
+	game_over_timer = 0
+	go_player_frame = true
+	player_angle = 0
+	go_visible = false
+	
+	-- reset game game game
+	
+	whip_timer = 0
+	whip_max = 9
+	whip_freeze = 0
+	whip_freeze_max = 18
+	whip_hit_buffer = 2
+	whip_calc = 0
+	whip_angle = 0
+	player_health_total = 12
+	player_travel = 0
+
+	frisbee_equipped = true
+	frisbee_x = 0
+	frisbee_y = 0
+	frisbee_facing = 1
+	frisbee_active = false
+	frisbee_air = 0
+	frisbee_air_kick = 14
+	frisbee_angle = 0
+	frisbee_theta = 1
+	
+	intro_timer = 0
+	
+	-- kill everyone
+	
+	for _,U in ipairs(updateables) do
+		for i, v in lume.ripairs(_G[U]) do
+			v:delete()
+			table.remove(_G[U], i)
+		end
+	end
+	
+	deathwall.x = -400
+	deathwall.w = 400
+	deathwall.h = 720
+
+	deathwall.delay = 0
+	deathwall.start = 60 * 3
+
+	deathwall.speed = 1
+	deathwall.temp_speed = 0
+
+	DEATHWALL_SPEED_INCREASE = 0.6
+	DEATHWALL_MAX_SPEED = 9
+	DEATHWALL_TEMP_SPEEDUP = 33
+	DEATHWALL_TEMP_DECEL = 1.4
+
+	deathwall.guy_frame = 3
+	deathwall.guy_frame_timer = 0
+	
+	loader.temp_map = {}
+	loader.step = 1
+	loader.kill_next = -2
+	loader.spawn_after = 100
+	loader.x = 0
+	loader.spawn_remainder = 0
+	loader.spawn_after_static = 0
+	
+	camera_x = 0
+	camera_y = 0
+
+	loader.init()
+	
+	game_over = false
+
+end
+
+function ui.finalUpdate(dt)
+
+	if go_visible then
+	
+		if final_fade_out then
+			
+			game_opacity = math.min(game_opacity + 4 * dt * 60, 255)
+			music_end_vol = 0.4 * (1 - (game_opacity/255))
+			music_end:setVolume(music_end_vol)
+			
+			if game_opacity == 255 then
+				music_end:stop()
+				music_end:setVolume(0.4)
+				ui.resetGame()
+				final_fade_out = false
+			end
+		
+		else
+			
+			--logo_opacity = math.max(logo_opacity - 4 * 60 * dt, 0)
+			
+			final_menu_cursor = ui.updateCursor(final_menu_cursor, #ui.final_menu, dt)
+			
+			-- Action for pause menu
+			if z_key == _RELEASE or enter_key == _RELEASE or space_key == _RELEASE then
+				
+				local get_option = ui.final_menu[final_menu_cursor].index
+				
+				if get_option == FINAL_RESTART then
+					final_fade_out = true
+				elseif get_option == FINAL_QUIT then
 					love.event.quit()
 				end
 

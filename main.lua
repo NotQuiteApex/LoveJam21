@@ -28,9 +28,9 @@ default_height = 800
 MODE_LOGO = 1
 MODE_MENU = 2
 MODE_GAME = 3
-GAME_MODE = MODE_MENU
+GAME_MODE = MODE_LOGO
 
-SKIP_INTRO = true
+SKIP_INTRO = false
 
 lg = love.graphics
 local lk = love.keyboard
@@ -41,6 +41,7 @@ la = love.audio
 -- deleting these breaks polygon.lua
 c_white = {1,1,1,1}
 c_black = {0,0,0,1}
+c_midnight = {6/255, 13/255, 69/255, 1}
 
 global_music_volume = 1
 
@@ -158,6 +159,7 @@ function love.load()
 	
 	sfx_enemy_pop = la.newSource("sfx/enemy_pop.wav", "static")
 	sfx_die = la.newSource("sfx/death.wav", "static")
+	sfx_die:setVolume(0.7)
 	snd_intro = la.newSource("sfx/intro.wav", "static")
 	snd_intro:setVolume(0.4)
 	
@@ -189,8 +191,8 @@ function love.load()
 		logo_opacity = 0
 	end
 	
-	camera_x = 0--player_x + 24
-	camera_y = 0--player_y + 24
+	camera_x = 0
+	camera_y = 0
 
 	loader.init()
 	
@@ -223,6 +225,10 @@ function love.draw()
 	end
 	
 	ui.draw(0)
+	
+	if game_over then
+		ui.drawGameOver(2)
+	end
 	
 	lg.setScissor()
 	lg.pop() --screen scaling
@@ -277,7 +283,7 @@ function drawGame()
 	if not game_over then
 		ent_player:draw()
 	else
-		ui.drawGameOver()
+		ui.drawGameOver(1)
 	end
 	
 
@@ -312,8 +318,10 @@ function drawGame()
 	end
 	lg.pop()
 	
+	if not game_over then
 	lg.setColor(0,0,0,game_opacity/255)
 	lg.rectangle("fill", 0, 0, default_width, default_height)
+	end
 end
 
 function drawLogo()
@@ -414,7 +422,10 @@ end
 
 function updateGame(dt)
 
-	game_opacity = math.max(game_opacity - 4 * 60 * dt, 0)
+	if final_fade_out == false then
+		game_opacity = math.max(game_opacity - 4 * 60 * dt, 0)
+	end
+	
 	if SKIP_INTRO == false or intro_timer < 11 * 60 then
 		camera_x = ent_player.x
 		if game_opacity == 0 then
@@ -424,6 +435,23 @@ function updateGame(dt)
 				snd_intro:stop()
 				snd_intro:play()
 			end
+			
+			deathwall.guy_frame_timer = math.min(deathwall.guy_frame_timer + dt * 60, 6)
+			
+			if deathwall.guy_frame_timer == 6 then
+			
+				if deathwall.guy_frame == 1 then
+					deathwall.guy_frame = 2
+				else
+					deathwall.guy_frame = 1
+				end
+				
+				deathwall.guy_frame_timer = 0
+			
+			end
+			
+			--deathwall.guy_frame = 3
+			
 		end
 		
 		if intro_timer == 11 * 60 or SKIP_INTRO then

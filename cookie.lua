@@ -106,6 +106,7 @@ end
 function cookie:delete()
 	bumpwrld:remove(self)
 
+	if not game_over then
 	if not self.deletenoscore then
 		local spawndrop = lume.weightedchoice({
 			[true] = 1,
@@ -124,5 +125,6 @@ function cookie:delete()
 		explosions[#explosions+1] = explosion:new(self.x, self.y, 360, 750)
 		
 		ent_player.score = ent_player.score + 10
+	end
 	end
 end

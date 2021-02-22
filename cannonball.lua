@@ -61,7 +61,9 @@ end
 function cannonball:delete()
 	bumpwrld:remove(self)
 
+	if not game_over then
 	sfx_enemy_pop:stop()
 	sfx_enemy_pop:setPitch(0.4 + math.random(4)/10)
 	sfx_enemy_pop:play()
+	end
 end

@@ -12,6 +12,7 @@ whip_hit_buffer = 2
 whip_calc = 0
 whip_angle = 0
 player_health_total = 12
+player_travel = 0
 
 frisbee_equipped = true
 frisbee_x = 0
@@ -487,6 +488,7 @@ function player:update(dt)
 	local x_change = self.x - ox
 	loader.spawn_after = loader.spawn_after - x_change
 	background_x = -camera_x
+	player_travel = player_travel + x_change
 	while background_x >= 81 do
 		background_x = background_x - 80
 	end
