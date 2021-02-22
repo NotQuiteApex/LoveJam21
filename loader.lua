@@ -11,15 +11,15 @@ loader.spawn_after_static = 0
 function loader.init()
 
 	loader.temp_map = {
-		"#        I F           I             I F          I             I F             ",
-		"#  WW    I ^^^^^^^     I             I            I       G     I          WW   ",
-		"#  WW    I   nnn       I     m WW    I            I             I          WW   ",
-		"#        I             I       WW    I   c bb c   I      c c    I               ",
-		"# P      I             I m           I ^^^^^^^^   I  ^^^^^^^^   I               ",
-		"####     I      g      I             I^^          I             I               ",
-		"# T      I             I    ^^     ^^^^      s    I     T   s   I        T      ",
-		"#        I   ^^     oo I  ^^^^^      I           oI             I   oo          ",
-		"$$$$$$$$$$   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"#        I F           I             ",
+		"#  WW    I             I             ",
+		"#  WW    I             I       WW    ",
+		"#        I             I       WW    ",
+		"# P      I             I             ",
+		"####     I             I      mm     ",
+		"# T      I             I             ",
+		"#        I   ##     oo I  ^^^^^      ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 	
 	loader.load()
@@ -39,6 +39,14 @@ function loader.loadTemplate()
 		loader.template2()
 	elseif x == 3 then
 		loader.template3()
+	elseif x == 4 then
+		loader.template3()
+	elseif x == 5 then
+		loader.template3()
+	elseif x == 6 then
+		loader.template3()
+	elseif x == 7 then
+		loader.template3()
 	end
 	
 	loader.load()
@@ -48,14 +56,14 @@ end
 function loader.template1()
 
 	loader.temp_map = {
-		"         I F           I             ",
-		"   WW    I ^^^^^^^     I             ",
-		"   WW    I   nnn       I       WW    ",
-		"         I             I       WW    ",
-		"         I             I             ",
-		" ###     I      g      I             ",
-		"  T      I             I    ^^     ^^",
-		"         I   ^^     oo I  ^^^^^      ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
 		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
@@ -65,15 +73,15 @@ end
 function loader.template2()
 
 	loader.temp_map = {
-		"         W F           I             ",
-		"   WW    W ^^^^^^^     I             ",
-		"   WW    W   nnn       I       WW    ",
-		"         W             I       WW    ",
-		"         W             I             ",
-		" ###     W      g      I             ",
-		"  T      W             I    ^^     ^^",
-		"         W   ^^     oo I  ^^^^^      ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"        g                            ",
+		"                                     ",
+		"       ########                      ",
+		"    o                                ",
+		"######                               ",
+		"                 $$$$$$$$$$$$$$$$$$$$",
 	}
 
 end
@@ -81,14 +89,94 @@ end
 function loader.template3()
 
 	loader.temp_map = {
-		"           F           I             ",
-		"   WW      ^^^^^^^     I             ",
-		"   WW    W   nnn       I       WW    ",
-		"         W             I       WW    ",
-		"                       I             ",
-		" ###            g      I             ",
-		"  T      W             I    ^^     ^^",
-		"        WW   ^^     oo I  ^^^^^      ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+function loader.template4()
+
+	loader.temp_map = {
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+function loader.template5()
+
+	loader.temp_map = {
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+function loader.template6()
+
+	loader.temp_map = {
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+function loader.template7()
+
+	loader.temp_map = {
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+	}
+
+end
+
+function loader.template8()
+
+	loader.temp_map = {
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
+		"                                     ",
 		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
@@ -124,6 +212,10 @@ function loader.load()
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "pillarguy.soda", false)
 			elseif m == "F" then -- (F)lag
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "flag.soda", false)
+			elseif m == "u" then -- p(u)rple brick
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "purpbrick.soda", false)
+			elseif m == "C" then -- moon (C)
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "purpbrick.soda", false)
 			elseif m == "s" then -- (s)wiper
 				--enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
 			elseif m == "b" then -- straw(b)erry
