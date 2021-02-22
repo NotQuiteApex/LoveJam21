@@ -16,7 +16,7 @@ function loader.init()
 		"#  WW    I             I       WW    ",
 		"#        I             I       WW    ",
 		"# P      I             I             ",
-		"####     I             I      mm     ",
+		"####     I             I       m     ",
 		"# T      I             I             ",
 		"#        I   ##     oo I  ^^^^^      ",
 		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
@@ -29,7 +29,7 @@ end
 
 function loader.loadTemplate()
 	
-	local x = math.random(3)
+	local x = math.random(7)
 	
 	loader.step = loader.step + 1
 	
@@ -38,15 +38,15 @@ function loader.loadTemplate()
 	elseif x == 2 then
 		loader.template2()
 	elseif x == 3 then
-		loader.template3()
+		loader.template4()
 	elseif x == 4 then
-		loader.template3()
+		loader.template5()
 	elseif x == 5 then
-		loader.template3()
+		loader.template6()
 	elseif x == 6 then
-		loader.template3()
+		loader.template7()
 	elseif x == 7 then
-		loader.template3()
+		loader.template8()
 	end
 	
 	loader.load()
@@ -56,14 +56,14 @@ end
 function loader.template1()
 
 	loader.temp_map = {
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
+		"                   I                 ",
+		"              WW   I           WW    ",
+		"              WW   I           WW    ",
+		"       WW          I                 ",
+		"       WW          I        g        ",
+		"                   I                 ",
+		"    T              I        @@@@@@   ",
+		"  ^  o   o   o ^   I   [==========]  ",
 		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
@@ -74,13 +74,13 @@ function loader.template2()
 
 	loader.temp_map = {
 		"                                     ",
-		"                                     ",
-		"                                     ",
+		"            WW                   WW  ",
+		"            WW                   WW  ",
 		"        g                            ",
-		"                                     ",
-		"       ########                      ",
-		"    o                                ",
-		"######                               ",
+		"                               CCCCCC",
+		"       ########               C      ",
+		"    o                        C   T   ",
+		"######              [====]           ",
 		"                 $$$$$$$$$$$$$$$$$$$$",
 	}
 
@@ -89,14 +89,14 @@ end
 function loader.template3()
 
 	loader.temp_map = {
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
+		"    I F                I F           ",
+		"    I                  I         WW  ",
+		"    I        WW        I         WW  ",
+		"    I        WW        I             ",
+		"    I                  I             ",
+		"    I                  I        G    ",
+		"    I                  I  m          ",
+		" cucucucucu      ucucucucucu         ",
 		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
 	}
 
@@ -105,15 +105,15 @@ end
 function loader.template4()
 
 	loader.temp_map = {
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"            I F              I       ",
+		"            I                I     WW",
+		"            I                I     WW",
+		"            I                I       ",
+		"    WW      I                I       ",
+		"    WW    G I                I       ",
+		"            I        m       I   m   ",
+		"            I                I       ",
+		"$$$$      $$$$$$     $$$$$$  I  $$$$$",
 	}
 
 end
@@ -121,15 +121,15 @@ end
 function loader.template5()
 
 	loader.temp_map = {
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"      I F       I F                  ",
+		"      I         I                    ",
+		"      I         I                    ",
+		"      I         I                    ",
+		"      I         I                    ",
+		"      I         I                    ",
+		"      I         I              b     ",
+		"      I  uuuuuu I   uu     uuuuu    c",
+		"$$$$$ I  uuuuuu I   uu     uuuuu$$$$$",
 	}
 
 end
@@ -213,9 +213,17 @@ function loader.load()
 			elseif m == "F" then -- (F)lag
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "flag.soda", false)
 			elseif m == "u" then -- p(u)rple brick
-				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "purpbrick.soda", false)
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "purpbrick.soda", true)
+			elseif m == "[" then -- front table
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "tab1.soda", true)
+			elseif m == "=" then -- mid table
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "tab2.soda", true)
+			elseif m == "]" then -- end table
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "tab3.soda", true)
+			elseif m == "@" then -- spaghetti
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "amore.soda", true)
 			elseif m == "C" then -- moon (C)
-				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "purpbrick.soda", false)
+				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "moon.soda", true)
 			elseif m == "s" then -- (s)wiper
 				--enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
 			elseif m == "b" then -- straw(b)erry
