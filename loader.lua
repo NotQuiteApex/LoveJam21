@@ -122,10 +122,10 @@ function loader.template5()
 
 	loader.temp_map = {
 		"      I F       I F                  ",
-		"      I         I                    ",
-		"      I         I                    ",
-		"      I         I                    ",
-		"      I         I                    ",
+		"      I    WW   I                    ",
+		"      I    WW   I                    ",
+		"      I         I           WW       ",
+		"      I         I           WW       ",
 		"      I         I                    ",
 		"      I         I              b     ",
 		"      I  uuuuuu I   uu     uuuuu    c",
@@ -137,15 +137,15 @@ end
 function loader.template6()
 
 	loader.temp_map = {
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"        I F          I F             ",
+		"        I       WW   I               ",
+		"  WW    I       Ww   I        WW     ",
+		"  WW    I            I        WW     ",
+		"        I            I               ",
+		"        I        u   I    u          ",
+		"        I   C    uo  I   uu          ",
+		"      C I        uuuuuuuuuu        c ",
+		" C      I                       $$$$$",
 	}
 
 end
@@ -153,15 +153,15 @@ end
 function loader.template7()
 
 	loader.temp_map = {
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"                                     ",
-		"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+		"      I                      WW      ",
+		"      I                      WW      ",
+		"      I       WW                     ",
+		"      I       WW                     ",
+		"      I                              ",
+		"      I                      G       ",
+		"  T   I           b  c               ",
+		"      I       ^^^^^^^^^              ",
+		"$$$$$$$$$$$               $$$$$$$$$$$",
 	}
 
 end
