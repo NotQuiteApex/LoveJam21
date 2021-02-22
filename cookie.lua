@@ -120,4 +120,6 @@ function cookie:delete()
 	end
 	-- spawn explosion
 	explosions[#explosions+1] = explosion:new(self.x, self.y, 360, 750)
+	
+	ent_player.score = ent_player.score + 10
 end

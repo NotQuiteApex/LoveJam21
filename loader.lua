@@ -123,7 +123,7 @@ function loader.load()
 			elseif m == "F" then -- (F)lag
 				tiles[#tiles+1] = tile:new(map_spawn_x, map_spawn_y, "flag.soda", false)
 			elseif m == "s" then -- (s)wiper
-				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
+				--enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "swiper.soda", ENEMY_SWIPER)
 			elseif m == "b" then -- straw(b)erry
 				strawberrys[#strawberrys+1] = strawberry:new(map_spawn_x, map_spawn_y)
 			elseif m == "g" then -- (g)host

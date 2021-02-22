@@ -56,4 +56,5 @@ end
 
 function pickup:delete()
 	bumpwrld:remove(self)
+	ent_player.score = ent_player.score + 20
 end

@@ -55,4 +55,6 @@ function strawberry:delete()
 	if spawndrop then
 		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
 	end
+
+	ent_player.score = ent_player.score + 5
 end

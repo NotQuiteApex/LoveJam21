@@ -89,4 +89,6 @@ function goomba:delete()
 			math.pi*math.random(), math.random(-60*6, 60*6),
 			-math.random(500, 1000), math.pi/2*math.random(-60, 60))
 	end
+
+	ent_player.score = ent_player.score + 5
 end
