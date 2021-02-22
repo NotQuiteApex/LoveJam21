@@ -16,8 +16,11 @@ Menu: Arrow keys to move cursor, Enter to select, Escape to exit at any time. Ga
 * NotQuiteApex - Code, Art, Design
 * Percy_Creates - Art, Design
 
+## License
+Any libraries we used have their own licenses, please read them at their sources. All other code in this repo is licensed under the zlib license. All other assets belong to their respective owner and are used at their discretion and approval.
+
 # Libraries
 * Sodalite Engine - Ill Teteka
-* lume.lua - rxi
-* bump.lua - kikito
-* class.lua - Bartbes (2009, source unknown)
+* lume.lua - rxi - [Source](https://github.com/rxi/lume)
+* bump.lua - kikito - [Source](https://github.com/kikito/bump.lua)
+* class.lua - Bart Bes - Taken from [here](https://github.com/Stabyourself/mari0/blob/master/class.lua).

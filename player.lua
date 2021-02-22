@@ -260,6 +260,7 @@ function player:update(dt)
 				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
 			elseif o.droptype == "weapon" then
 				self.subweapon = o.weptype
+				self.subequipped = true
 				
 				if o.weptype == "frisbee" then
 					sfx_get_frisbee:stop()
