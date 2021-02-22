@@ -163,6 +163,7 @@ function loader.load()
 		for i, v in ipairs(_G[U]) do
 			if v.loader == loader.kill_next then
 				v.deleteself = true
+				v.deletenoscore = true
 			end
 		end
 	end

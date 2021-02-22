@@ -3,9 +3,6 @@ local la = love.audio
 explosion = class:new()
 explosions = {}
 
-local sfx_explode = la.newSource("sfx/explosion.wav", "static")
-sfx_explode:setVolume(0.5)
-
 function explosion:init(x, y, maxradius, radiusvel)
 	self.x = x
 	self.y = y

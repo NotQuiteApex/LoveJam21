@@ -48,13 +48,15 @@ end
 function strawberry:delete()
 	bumpwrld:remove(self)
 
-	local spawndrop = lume.weightedchoice({
-		[true] = 1,
-		[false] = 4*2
-	})
-	if spawndrop then
-		pickups[#pickups+1] = pickup:new(self.x, self.y+10)
-	end
+	if not self.deletenoscore then
+		local spawndrop = lume.weightedchoice({
+			[true] = 1,
+			[false] = 4*1.5
+		})
+		if spawndrop then
+			pickups[#pickups+1] = pickup:new(self.x, self.y+10)
+		end
 
-	ent_player.score = ent_player.score + 5
+		ent_player.score = ent_player.score + 5
+	end
 end
