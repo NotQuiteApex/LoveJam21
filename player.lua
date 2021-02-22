@@ -467,12 +467,20 @@ function player:update(dt)
 			if cannon_timer > cannon_timer_max then
 				self.subequipped = true
 				cannon_timer = 0
+
+				sfx_collect:stop()
+				sfx_collect:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_collect:play()
 			end
 		elseif self.subweapon == "steamypb" then
 			steamypb_timer = steamypb_timer + dt
 			if steamypb_timer > steamypb_timer_max then
 				self.subequipped = true
 				steamypb_timer = 0
+
+				sfx_collect:stop()
+				sfx_collect:setPitch(1 + math.random()*0.1 - 0.05)
+				sfx_collect:play()
 			end
 		end
 	end
