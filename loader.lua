@@ -139,7 +139,7 @@ function loader.template6()
 	loader.temp_map = {
 		"        I F          I F             ",
 		"        I       WW   I               ",
-		"  WW    I       Ww   I        WW     ",
+		"  WW    I       WW   I        WW     ",
 		"  WW    I            I        WW     ",
 		"        I            I               ",
 		"        I        u   I    u          ",
