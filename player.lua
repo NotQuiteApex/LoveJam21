@@ -71,7 +71,7 @@ function player:init(x, y)
 
 	self.appliedhurtimpulse = false
 
-	self.player_facing = 1
+	self.player_facing = -1
 
 	bumpwrld:add(self, x, y, 60, 60)
 end
