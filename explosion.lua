@@ -1,5 +1,10 @@
+local la = love.audio
+
 explosion = class:new()
 explosions = {}
+
+local sfx_explode = la.newSource("sfx/explosion.wav", "static")
+sfx_explode:setVolume(0.5)
 
 function explosion:init(x, y, maxradius, radiusvel)
 	self.x = x
@@ -7,6 +12,8 @@ function explosion:init(x, y, maxradius, radiusvel)
 	self.radius = 1
 	self.maxradius = maxradius
 	self.radiusvel = radiusvel
+
+	sfx_explode:clone():play()
 end
 
 function explosion:update(dt)

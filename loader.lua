@@ -127,7 +127,7 @@ function loader.load()
 			elseif m == "b" then -- straw(b)erry
 				strawberrys[#strawberrys+1] = strawberry:new(map_spawn_x, map_spawn_y)
 			elseif m == "g" then -- (g)host
-				enemy_data[#enemy_data+1] = enemy:new(map_spawn_x, map_spawn_y, "ghost.soda", ENEMY_GHOST)
+				ghosts[#ghosts+1] = ghost:new(map_spawn_x, map_spawn_y)
 			elseif m == "c" then -- (c)ookie
 				cookies[#cookies+1] = cookie:new(map_spawn_x, map_spawn_y)
 			elseif m == "o" then -- g(o)omba

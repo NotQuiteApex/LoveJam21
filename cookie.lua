@@ -92,26 +92,22 @@ function cookie:damage(o)
 		self.state = "primed"
 		self.xv = dx * 600
 		self.yv = -200
-
-		sfx_enemy_pop:stop()
-		sfx_enemy_pop:setPitch(0.9 + math.random(4)/10)
-		sfx_enemy_pop:play()
 	else
 		self.xv = dx * 600
 		self.yv = -200
 		self.y = self.y-2
-
-		sfx_enemy_pop:stop()
-		sfx_enemy_pop:setPitch(0.9 + math.random(4)/10)
-		sfx_enemy_pop:play()
 	end
+
+	sfx_enemy_pop:stop()
+	sfx_enemy_pop:setPitch(0.9 + math.random(4)/10)
+	sfx_enemy_pop:play()
 end
 
 function cookie:delete()
 	bumpwrld:remove(self)
 	local spawndrop = lume.weightedchoice({
 		[true] = 1,
-		[false] = 4
+		[false] = 4*2
 	})
 	if spawndrop then
 		pickups[#pickups+1] = pickup:new(self.x, self.y+10)

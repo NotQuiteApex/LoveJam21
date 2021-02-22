@@ -55,6 +55,9 @@ function player:init(x, y)
 	self.iframeseffect = false
 	self.hitdirection = 1
 
+	self.subweapon = "none" -- frisbee, cannon, steamypb
+	self.subequipped = false
+
 	self.type = "player"
 
 	self.state = "normal" -- normal, hurt, grappled
@@ -248,6 +251,8 @@ function player:update(dt)
 				sfx_health_pickup:stop()
 				sfx_health_pickup:play()
 				sfx_health_pickup:setPitch(0.9+math.random(3)/10)
+			elseif o.droptype == "weapon" then
+				self.subweapon = o.weptype
 			end
 		end
 	end
@@ -363,8 +368,6 @@ function player:update(dt)
 	end
 	
 	if frisbee_active then
-	
-		
 		if frisbee_air <= frisbee_air_kick then
 			frisbee_air = math.min(frisbee_air + dt * 60, frisbee_air_kick)
 		end
@@ -422,6 +425,7 @@ function player:update(dt)
 			end
 		end
 	end
+
 	
 	-- This moves the endless level
 	local x_change = self.x - ox
@@ -513,6 +517,10 @@ function player:draw()
 end
 
 function player:jump()
+	if self.state ~= "normal" then
+		return
+	end
+
 	sfx_jump:stop()
 	sfx_jump:setPitch(1.4 + math.random(10)/10)
 	sfx_jump:play()

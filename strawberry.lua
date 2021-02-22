@@ -10,8 +10,10 @@ function strawberry:init(x, y)
 	self.y = y
 
 	self.isEnemy = true
-	
+
 	self.loader = loader.step
+
+	self.type = "strawberry"
 
 	self.timeroffset = math.random()*math.pi
 
@@ -48,7 +50,7 @@ function strawberry:delete()
 
 	local spawndrop = lume.weightedchoice({
 		[true] = 1,
-		[false] = 4
+		[false] = 4*2
 	})
 	if spawndrop then
 		pickups[#pickups+1] = pickup:new(self.x, self.y+10)

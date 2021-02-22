@@ -6,7 +6,7 @@ function pickup:init(x, y)
 	self.y = y
 
 	self.type = "pickup"
-	
+
 	self.loader = loader.step
 
 	local droptype = lume.weightedchoice({
@@ -29,7 +29,7 @@ function pickup:init(x, y)
 end
 
 function pickup:update(dt)
-	self.y = self.y + 60 * dt
+	self.y = self.y + 3 * 60 * dt
 
 	local function filter(i, o)
 		if o.type == "ground" then return "touch" end
