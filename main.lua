@@ -68,6 +68,8 @@ f4_key = _OFF
 
 font_scale = 2
 
+background_x = 0
+
 updateables = {"tiles", "goombas", "cookies", "strawberrys", "medusas", "ghosts",
 	"pickups", "enemy_data", "explosions", "gibs"}
 
@@ -110,8 +112,6 @@ function love.load()
 	
 	mdl_player = polygon.new("soda/THEGUY.soda")
 	mdl_player_walk = polygon.new("soda/THEGUYWALKS.soda")
-	mdl_player.bbox_visible = true
-	mdl_player_walk.bbox_visible = true
 	mdl_whip = polygon.new("soda/THEGUYARM.soda")
 	mdl_frisbee = polygon.new("soda/frisbee.soda")
 	
@@ -130,6 +130,8 @@ function love.load()
 	mdl_skull2 = polygon.new("soda/skull2.soda")
 	mdl_bone2 = polygon.new("soda/bone2.soda")
 	mdl_edgesoul = polygon.new("soda/edgeofsoul.soda")
+	
+	mdl_background = polygon.new("soda/background.soda")
 
 	ui_heart = polygon.new("soda/ui_heart.soda")
 	ui_heartright = polygon.new("soda/ui_heartright.soda")
@@ -205,8 +207,30 @@ function love.draw()
 end
 
 function drawGame()
-	lg.setColor(0, 0.25, 0.25)
-	lg.rectangle("fill", 0, 0, default_width, default_height)
+	--lg.setColor(0, 0.25, 0.25)
+	--lg.rectangle("fill", 0, 0, default_width, default_height)
+	
+	lg.push()
+	lg.translate(background_x, 0)
+	local i, j = 0, 1
+	while i <= 17 do
+	
+		
+		while j <= 9 do
+		
+			lg.push()
+			lg.translate( (i-1)*80, (j-1)*80)
+			polygon.draw(mdl_background)
+			lg.pop()
+			j = j + 1
+		
+		end
+		
+		j = 1
+		i = i + 1
+	end
+	lg.pop()
+	
 	lg.push()
 	lg.translate(0, 80)
 	local half_width, half_height = default_width / 2, math.floor(default_height / 2)
@@ -228,7 +252,7 @@ function drawGame()
 	deathwall.draw()
 
 	ent_player:draw()
-
+	
 
 	lg.pop()
 

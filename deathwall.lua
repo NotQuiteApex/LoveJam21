@@ -9,7 +9,7 @@ deathwall.start = 60 * 3
 
 deathwall.data = {}
 
-deathwall.color = {111/255, 76/255, 42/255, 1}
+deathwall.color = {252/255, 58/255, 0/255, 1}
 
 deathwall.speed = 1
 deathwall.temp_speed = 0

@@ -428,6 +428,14 @@ function player:update(dt)
 	-- This moves the endless level
 	local x_change = self.x - ox
 	loader.spawn_after = loader.spawn_after - x_change
+	background_x = -camera_x
+	while background_x >= 81 do
+		background_x = background_x - 80
+	end
+	
+	while background_x <= -81 do
+		background_x = background_x + 80
+	end
 	
 	if loader.spawn_after <= 0 then
 		loader.loadTemplate()
