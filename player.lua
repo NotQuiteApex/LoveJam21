@@ -56,7 +56,7 @@ function player:init(x, y)
 	self.hitdirection = 1
 
 	self.subweapon = "none" -- frisbee, cannon, steamypb
-	self.subequipped = false
+	self.subequipped = true
 
 	self.type = "player"
 
@@ -345,84 +345,82 @@ function player:update(dt)
 		end
 	end
 	
-	-- Frisbee
-	if frisbee_equipped then
-	
+	-- use subweapon
+	if self.subequipped then
 		if comma_key == _PRESS then
-			frisbee_equipped = false
-			
-			local push_frisbee_x = 70
-			
-			if self.player_facing == -1 then
-				push_frisbee_x = -70 + 10
+			if self.subweapon == "frisbee" then
+				self.subequipped = false
+				
+				local push_frisbee_x = 70
+				
+				if self.player_facing == -1 then
+					push_frisbee_x = -70 + 10
+				end
+				
+				frisbee_x = self.x - 10 + push_frisbee_x
+				frisbee_y = self.y + 10
+				frisbee_facing = self.player_facing
+				frisbee_active = true
+				frisbee_air = 1
+				frisbee_angle = 0
+			elseif self.subweapon == "cannon" then
+			elseif self.subweapon == "steamypb" then
 			end
-			
-			frisbee_x = self.x - 10 + push_frisbee_x
-			frisbee_y = self.y + 10
-			frisbee_facing = self.player_facing
-			frisbee_active = true
-			frisbee_air = 1
-			frisbee_angle = 0
 		end
-	
 	end
-	
-	if frisbee_active then
-		if frisbee_air <= frisbee_air_kick then
-			frisbee_air = math.min(frisbee_air + dt * 60, frisbee_air_kick)
-		end
-		
-		if frisbee_theta == 1 then
-			frisbee_angle = math.min(frisbee_angle + 60 * 3 * dt, 39)
-			if frisbee_angle == 39 then
-				frisbee_theta = -1
-			end
-		elseif frisbee_theta == -1 then
-			frisbee_angle = math.max(frisbee_angle - 60 * dt, 0)
-		end
-			
-		local fris_spd = 11
-			
-		if frisbee_angle == 0 then
-			frisbee_y = frisbee_y + 0.1 * 60 * dt
-			
-			if frisbee_x - 20 > self.x + default_width/2 then
-				frisbee_facing = -1
-			elseif frisbee_x + 100 < self.x - default_width/2 then
-				frisbee_facing = 1
-			end
-			
-			fris_spd = 13
-			
-		end
-		
-		local actual_spd = (frisbee_air/frisbee_air_kick) * fris_spd
-		frisbee_x = frisbee_x + polygon.lengthdir_x(fris_spd * frisbee_facing, math.rad(frisbee_angle)) * dt * 60
-		frisbee_y = frisbee_y + polygon.lengthdir_y(fris_spd, math.rad(frisbee_angle)) * 60 * dt + (frisbee_angle==0 and 60*dt or 0)
-		
-		local dist = lume.distance(self.x, self.y, frisbee_x, frisbee_y)
-		if frisbee_angle == 0 and dist < 60 then
-			frisbee_active = false
-			frisbee_air = 0
-			frisbee_angle = 0
-			frisbee_theta = 1
-			frisbee_equipped = true
-		end
 
-		if frisbee_y > 800 then
-			frisbee_active = false
-			frisbee_air = 0
-			frisbee_angle = 0
-			frisbee_theta = 1
-			frisbee_equipped = true
-		end
-	
-		local function filter(i) return i.isEnemy == true end
-		local items, len = bumpwrld:queryRect(frisbee_x, frisbee_y, 80, 26, filter)
-		for i, v in ipairs(items) do
-			if v.damage and v.type ~= "player" then
-				v:damage(self)
+	if not self.subequipped then
+		if self.subweapon == "frisbee" then
+			if frisbee_air <= frisbee_air_kick then
+				frisbee_air = math.min(frisbee_air + dt * 60, frisbee_air_kick)
 			end
+			
+			if frisbee_theta == 1 then
+				frisbee_angle = math.min(frisbee_angle + 60 * 3 * dt, 39)
+				if frisbee_angle == 39 then
+					frisbee_theta = -1
+				end
+			elseif frisbee_theta == -1 then
+				frisbee_angle = math.max(frisbee_angle - 60 * dt, 0)
+			end
+				
+			local fris_spd = 11
+				
+			if frisbee_angle == 0 then
+				frisbee_y = frisbee_y + 0.1 * 60 * dt
+				
+				if frisbee_x - 20 > self.x + default_width/2 then
+					frisbee_facing = -1
+				elseif frisbee_x + 100 < self.x - default_width/2 then
+					frisbee_facing = 1
+				end
+				
+				fris_spd = 13
+				
+			end
+			
+			local actual_spd = (frisbee_air/frisbee_air_kick) * fris_spd
+			frisbee_x = frisbee_x + polygon.lengthdir_x(fris_spd * frisbee_facing, math.rad(frisbee_angle)) * dt * 60
+			frisbee_y = frisbee_y + polygon.lengthdir_y(fris_spd, math.rad(frisbee_angle)) * 60 * dt + (frisbee_angle==0 and 60*dt or 0)
+			
+			local dist = lume.distance(self.x, self.y, frisbee_x, frisbee_y)
+			if (frisbee_angle == 0 and dist < 60) or frisbee_y > 800 then
+				frisbee_active = false
+				frisbee_air = 0
+				frisbee_angle = 0
+				frisbee_theta = 1
+				self.subequipped = true
+			end
+		
+			local function filter(i) return i.isEnemy == true end
+			local items, len = bumpwrld:queryRect(frisbee_x, frisbee_y, 80, 26, filter)
+			for i, v in ipairs(items) do
+				if v.damage and v.type ~= "player" then
+					v:damage(self)
+				end
+			end
+		elseif self.subweapon == "cannon" then
+		elseif self.subweapon == "steamypb" then
 		end
 	end
 
@@ -484,36 +482,7 @@ function player:draw()
 		polygon.draw(mdl_frisbee)
 	
 	lg.pop()
-	--lg.rectangle("line",frisbee_x, frisbee_y, 80, 26)
 	end
-	
-	
-	--arm hit box
-	-- if whip_timer ~= 0 then
-	-- 	lg.setColor(1,1,1,1)
-	-- 	if whip_freeze ~= 0 then
-	-- 		if self.player_facing == -1 then
-	-- 			lg.rectangle("line", self.x -200+42, self.y + 16, 200, 16)
-	-- 		else
-	-- 			lg.rectangle("line", self.x + 12, self.y + 16, 200, 16)
-	-- 		end
-	-- 	else
-	-- 		if whip_timer < whip_max /2 then
-	-- 			if self.player_facing == -1 then
-	-- 				lg.rectangle("line", self.x +38-4, self.y - 42, 58, 58)
-	-- 			else
-	-- 				lg.rectangle("line", self.x - 38, self.y - 42, 58, 58)
-	-- 			end
-	-- 		else
-	-- 			if self.player_facing == -1 then
-	-- 				lg.rectangle("line", self.x +28-48-4, self.y - 42, 58, 58)
-	-- 			else
-	-- 				lg.rectangle("line", self.x - 28+48, self.y - 42, 58, 58)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
-	
 end
 
 function player:jump()
@@ -536,7 +505,7 @@ function player:damage(v, o)
 		self.state = "hurt"
 		self.health = self.health - 1
 		if v.normalX == 0 and o and o.xv then
-			self.hitdirection = o.xv
+			self.hitdirection = lume.sign(o.xv)
 		elseif v.normalX == 0 then
 			self.hitdirection = -self.player_facing
 		elseif v.normalX then

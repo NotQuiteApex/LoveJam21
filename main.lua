@@ -256,7 +256,7 @@ function drawGame()
 	lg.scale(0.5, 0.5)
 	polygon.draw(ui_box)
 	if ent_player.subweapon ~= "none" then
-		polygon.draw(ui_subweapons[ent_player])
+		polygon.draw(ui_subweapons[ent_player.subweapon])
 	end
 	lg.pop()
 end
