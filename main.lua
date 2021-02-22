@@ -289,6 +289,7 @@ function drawGame()
 	-- TODO: simplify text stuff
 	ui.drawHealth()
 	lg.push()
+	lg.translate(10,-5)
 	lg.scale(1/font_scale)
 	local text_scale = font_scale/1
 	--lg.setColor(0.5,0,0.5)

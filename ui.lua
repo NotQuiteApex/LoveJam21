@@ -134,7 +134,7 @@ function ui.drawHealth()
 
 	-- Draw health
 	lg.push()
-	lg.translate(24, 35)
+	lg.translate(10, 29)
 	lg.scale(2,2)
 
 	local i = 1
