@@ -301,11 +301,18 @@ function drawGame()
 	--lg.setColor(0.5,0,0.5)
 	--lg.print("health: " .. ent_player.health,math.floor(32*text_scale),math.floor(32*text_scale), 0, font_scale)
 	local scoretxt = "score: " .. string.format("%06d", ent_player.score)
+	local dpi_scale = love.graphics.getDPIScale()
+
+	local ts, fs = text_scale, font_scale
+	if dpi_scale ~= 1 then
+		ts, fs = 1, 2
+	end
+
 	lg.setColor(0,0,0)
-	lg.print(scoretxt, math.floor(900*1),math.floor(36*1), 0, 2)
-	lg.print(scoretxt, math.floor(904*1),math.floor(32*1), 0, 2)
+	lg.print(scoretxt, math.floor(900*ts),math.floor(36*ts), 0, fs)
+	lg.print(scoretxt, math.floor(904*ts),math.floor(32*ts), 0, fs)
 	lg.setColor(1,1,1)
-	lg.print(scoretxt, math.floor(900*1),math.floor(32*1), 0, 2)
+	lg.print(scoretxt, math.floor(900*ts),math.floor(32*ts), 0, fs)
 	lg.pop()
 
 	lg.push()

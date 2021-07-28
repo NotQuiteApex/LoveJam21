@@ -344,13 +344,22 @@ function ui.drawGameOver(x)
 			lg.translate(0, 144)
 			
 			lg.push()
-			local scale_menu = 2
-			local text_scale = 1
+			local scale_menu = 1
+			local text_scale = font_scale/1
 			
 			local meters = math.floor((player_travel/80)*100)/100
 			local scoretxt = string.format("%06d", ent_player.score)
 			
+			local dpi_scale = love.graphics.getDPIScale()
+
 			lg.push()
+
+			if dpi_scale ~= 1 then
+				scale_menu = 2
+				text_scale = 1
+			elseif dpi_scale == 1 then
+				lg.translate(-default_width/2,0)
+			end
 			
 			lg.setColor(c_white)
 			
