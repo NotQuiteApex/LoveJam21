@@ -344,17 +344,16 @@ function ui.drawGameOver(x)
 			lg.translate(0, 144)
 			
 			lg.push()
-			local scale_menu = 1
-			local text_scale = font_scale/1
+			local scale_menu = 2
+			local text_scale = 1
 			
 			local meters = math.floor((player_travel/80)*100)/100
 			local scoretxt = string.format("%06d", ent_player.score)
 			
 			lg.push()
 			
-			lg.translate(-default_width/2,0)
-			
 			lg.setColor(c_white)
+			
 			lg.printf("YOU'RE DEAD!", 0, 24 * text_scale * scale_menu, (default_width*text_scale)/scale_menu, "center", 0, scale_menu, scale_menu)
 			lg.printf("distance travelled: " .. meters .. "m", 0, 72 * text_scale * scale_menu, (default_width*text_scale)/scale_menu, "center", 0, scale_menu, scale_menu)
 			lg.printf("final score: " .. scoretxt, 0, 96 * text_scale * scale_menu, (default_width*text_scale)/scale_menu, "center", 0, scale_menu, scale_menu)

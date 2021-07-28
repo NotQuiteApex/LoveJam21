@@ -99,7 +99,7 @@ sfx_explode = la.newSource("sfx/explosion.wav", "static")
 sfx_explode:setVolume(0.5)
 
 function setDefaultWindow(fs)
-	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs})
+	lw.setMode(screen_width, screen_height, {resizable=true, minwidth=default_width, minheight=default_height, fullscreen=fs, usehighdpi=true, usedpiscale=true})
 	game_paused = true
 	enter_key = _OFF
 end
@@ -302,10 +302,10 @@ function drawGame()
 	--lg.print("health: " .. ent_player.health,math.floor(32*text_scale),math.floor(32*text_scale), 0, font_scale)
 	local scoretxt = "score: " .. string.format("%06d", ent_player.score)
 	lg.setColor(0,0,0)
-	lg.print(scoretxt, math.floor(900*text_scale),math.floor(36*text_scale), 0, font_scale)
-	lg.print(scoretxt, math.floor(904*text_scale),math.floor(32*text_scale), 0, font_scale)
+	lg.print(scoretxt, math.floor(900*1),math.floor(36*1), 0, 2)
+	lg.print(scoretxt, math.floor(904*1),math.floor(32*1), 0, 2)
 	lg.setColor(1,1,1)
-	lg.print(scoretxt, math.floor(900*text_scale),math.floor(32*text_scale), 0, font_scale)
+	lg.print(scoretxt, math.floor(900*1),math.floor(32*1), 0, 2)
 	lg.pop()
 
 	lg.push()
